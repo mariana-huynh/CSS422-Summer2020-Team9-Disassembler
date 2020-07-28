@@ -47,6 +47,7 @@ AsciiToHex
              MOVE.L  #0,D3              ; initialize D3 to 0
              MOVE.L  #8,D4              ; initialize D4 to 8, for number of iterations in for_loop1
              MOVE.L  #0,D5              ; initialize D5 to 0, for storing result of converted input to hex
+             MOVE.L  D1,D6              ; Move the length of the input to another register
     
 for_loop1    
              CMP.B   D3,D4              ; for number of iterations
@@ -182,6 +183,7 @@ InvalidAddrMessage  DC.B 'Invalid Address: input not valid hex value', CR, LF, 0
               END    START        ; last line of source
               
               
+
 
 *~Font name~Courier New~
 *~Font size~10~
