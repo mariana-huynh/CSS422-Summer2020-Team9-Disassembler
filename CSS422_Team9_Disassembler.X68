@@ -23,6 +23,9 @@ GetStartAddr
                                     
              MOVE.B  #2,D0                       ; trap task 2: takes in input from keyboard and stores into A1 
              TRAP    #15                    
+             
+             CMP     #8,D1                       ; Check if the given value was 8 characters long, if not it needs to be given again
+             BNE     InvalidAddrHandler
     
              CLR     D2                          ; clear toggle for if validated start/end address 
     
@@ -39,6 +42,12 @@ GetEndAddr
     
              MOVE.B  #2,D0                       ; trap task 2: takes in input from keyboard and stores into A1 
              TRAP    #15                         
+                   
+
+             MOVE.B  #1,D2                       ; If you need to go to invalidate, make sure its ending addr
+             CMP     #8,D1                       ; Check if the given value was 8 characters long, if not it needs to be given again
+             BNE     InvalidAddrHandler
+             MOVE.B  #0,D2                       ; Reset D2, if valid length
     
              BRA     AsciiToHex                  ; convert input to hex            
             
@@ -47,7 +56,6 @@ AsciiToHex
              MOVE.L  #0,D3              ; initialize D3 to 0
              MOVE.L  #8,D4              ; initialize D4 to 8, for number of iterations in for_loop1
              MOVE.L  #0,D5              ; initialize D5 to 0, for storing result of converted input to hex
-             MOVE.L  D1,D6              ; Move the length of the input to another register
     
 for_loop1    
              CMP.B   D3,D4              ; for number of iterations
@@ -151,6 +159,7 @@ DispInvalidAddrError
              LEA         InvalidAddrMessage, A1  ; load error message
              MOVE.B      #13, D0                 ; print contents of A1
              TRAP        #15
+             RTS
 
 quit    
 
@@ -169,9 +178,9 @@ Intro        DC.B    '**********************************************************
              DC.B    '*  TEAM 9: MARIANA HUYNH, HANNY LONG, ALEX VAN MATRE',CR,LF,CR,LF
              DC.B    '*********************************************************************',CR,LF,CR,LF,0
 
-AskStartAddr DC.B 'Enter starting address in hexadecimal:', CR, LF, 0
+AskStartAddr DC.B 'Enter starting address as an 8-character hexadecimal value:', CR, LF, 0
 
-AskEndAddr   DC.B 'Enter ending address in hexadecimal:', CR, LF, 0
+AskEndAddr   DC.B 'Enter ending address as an 8-character hexadecimal value:', CR, LF, 0
 
 AskToCont    DC.B 'Press Enter to continue:', 0
 
@@ -187,5 +196,5 @@ InvalidAddrMessage  DC.B 'Invalid Address: input not valid hex value', CR, LF, 0
 
 *~Font name~Courier New~
 *~Font size~10~
-*~Tab type~1~
+*~Tab type~0~
 *~Tab size~4~
