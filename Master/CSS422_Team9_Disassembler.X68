@@ -23,7 +23,7 @@ GetStartAddr
              TRAP    #15                         ; print to screen
     
              MOVEA.L #0,A1                       ; Clear A1
-             LEA     StartAddr,A1                ; Move variable EndAddr for storing 
+             LEA     StartAddr,A1                ; Move variable StartAddr for storing 
                                     
              MOVE.B  #2,D0                       ; trap task 2: takes in input from keyboard and stores into A1 
              TRAP    #15                    
@@ -47,10 +47,10 @@ GetEndAddr
              MOVE.B  #2,D0                       ; trap task 2: takes in input from keyboard and stores into A1 
              TRAP    #15                         
     
-             MOVE.B  #1,D2                       ; If you need to go to invalidate, make sure its ending addr
+             ;MOVE.B  #1,D2                       ; If you need to go to invalidate, make sure its ending addr
              CMP     #8,D1                       ; Check if the given value was 8 characters long, if not it needs to be given again
              BNE     InvalidAddrHandler
-             MOVE.B  #0,D2                       ; Reset D2, if valid length
+             ;MOVE.B  #0,D2                       ; Reset D2, if valid length
     
              BRA     AsciiToHex                  ; convert input to hex            
             
@@ -62,7 +62,7 @@ AsciiToHex
     
 ConvertForLoop    
              CMP.B   D3,D4                       ; for number of iterations
-             BEQ     ValidateStart               ; if equal to each other, move on to validate start address
+             BEQ     SaveStart                   ; if equal to each other, move on to validate start address
              ADDQ.L  #1,D3                       ; D3++
              
              ASL.L    #4,D5                      ; shift to the left 4 bits (1 hex character)
@@ -97,23 +97,17 @@ ConvertUppercase
              ADD.L   D1,D5
              BRA     ConvertForLoop              ; go back and do next character 
              
-* validate addresses
-ValidateStart 
+* Save start and end (and validate end) addresses
+SaveStart
              CMP         #1,D2  
              BEQ         ValidateEnd             ; if D2 = 1, already validated start address          
              ADDI        #1,D2                   ; if initially 0, add 1 to toggle to ValidateEnd
-
-             BTST        #0,D5                   ; check if even number
-             BNE         InvalidStartHandler     ; if not equal then odd number (error)
     
              JSR         PutStartToMemory        ; move converted starting address from D3 to defined memory location
              CLR         D5                   
              BRA         GetEndAddr              ; ask user for new end address
 
 ValidateEnd
-             BTST        #0,D5                   ; if =, then even
-             BNE         InvalidEndHandler       ; if !=, equal then odd (error)
-    
              CMP.L       StartAddr,D5            ; check if starting address is less than or equal to ending address
              BLE         InvalidEndHandler       ; if yes, = error (start must be less than end)
     
@@ -135,8 +129,8 @@ LoadAddr
              CLR.L       D2
              MOVE.L      StartAddr,A2
              MOVE.L      EndAddr,A3
-             ;JSR               
-             BRA quit
+             JSR         ReadNextLoop      
+             ;BRA quit
             
 * Invalid input handlers 
 InvalidAddrHandler
@@ -146,21 +140,128 @@ InvalidAddrHandler
 
 InvalidStartHandler                     
              MOVEA.L     #0,A1                   ; clear A1
-             JSR         DispInvalidAddrError
+             JSR         DispInvalidStartError
              CLR         D5                      
              BRA         GetStartAddr            ; ask for starting address again
   
 InvalidEndHandler                   
              MOVEA.L     #0,A1                   ; clear A1
-             JSR         DispInvalidAddrError             
+             JSR         DispInvalidEndError
              CLR         D5
              BRA         GetEndAddr
 
-DispInvalidAddrError
-             LEA         InvalidAddrMessage, A1  ; load error message
-             MOVE.B      #13, D0                 ; print contents of A1
+DispInvalidStartError
+             LEA         InvalidStartMessage,A1  ; load error message
+             MOVE.B      #13,D0                  ; print contents of A1
              TRAP        #15
              RTS
+
+DispInvalidEndError
+             LEA         InvalidEndMessage,A1    ; load error message
+             MOVE.B      #13,D0                  ; print contents of A1
+             TRAP        #15
+             RTS
+
+* Opcode Parsing 
+ReadNextLoop      
+             CMPA.L      A3,A2
+             BGE         AskExitOrRestart
+             
+StartParse
+             BSR         CheckIf20Lines
+             JSR         DispAddr
+             MOVE.W      (A2)+, D7               *Testing for MOVE
+             JSR         ParseOpcode
+             JMP         ReadNextLoop
+    
+CheckIf20Lines
+             ADD         #1, D2				     ; D2 = counter for number of lines 									
+             CMP         #20, D2 				
+										
+             BGE         EnterToCont          	 ; if 20 lines in ouput console, display press enter 
+             LEA         EmptyChar, A1			
+             MOVE.B      #14, D0
+             TRAP        #15
+    
+             RTS
+    
+EnterToCont
+             JSR         DispPressEnter          ; ask user to press enter to continue
+             MOVE        #0, D2		             ; set D2 counter back to 0
+             MOVE.B      #5, D0
+             TRAP        #15	
+             RTS	  
+    
+DispPressEnter
+             LEA         AskToCont,A1
+             MOVE.B      #14, D0
+             TRAP        #15
+             RTS
+
+DispAddr
+             MOVE.L      A2, D5 				  ; store current address to D5 
+             MOVE.L      D5, Cur4bits             ; move current address value to memory
+             JSR         HexToAscii			      ; display first four hexabits
+             MOVE.W      A2, D5		        	  ; repeat, but word to get last four hexabits
+             MOVE.W      D5, Cur4bits     		
+             JSR         HexToAscii		        
+             JSR         DispSpaceChar			  ; display space
+             RTS 
+    
+DispSpaceChar
+             MOVEA.L     #0, A1
+             LEA         SpaceChar, A1
+             MOVE.B      #14, D0
+             TRAP        #15
+             RTS
+    
+HexToAscii  ; not coded yet
+
+
+* Parse opcode
+ParseOpcode  ; not coded yet 
+            
+                      
+AskExitOrRestart                           
+             LEA         AskRestartOrExitMsg,A1 ; ask user to restart or exit program
+             MOVE.B      #14,D0
+             TRAP        #15
+    
+             MOVE.B      #4,D0                  ; trap task #4: get user input (digit)
+             TRAP        #15  
+    
+             CMP.B       #1,D1                  ; if user inputs 1, restart program
+             BEQ         ClearEverything
+             CMP.B       #0,D1                  ; if 0, terminate program
+             BNE         AskExitOrRestart       ; if not 0 nor 1, prompt again
+             BRA         quit
+             
+ClearEverything
+* Clear data registers
+             CLR.L       D0
+             CLR.L       D1
+             CLR.L       D2
+             CLR.L       D3
+             CLR.L       D4
+             CLR.L       D5
+             CLR.L       D6
+             CLR.L       D7
+
+* Clear address registers
+             MOVEA.L     #0, A0
+             MOVEA.L     #0, A1
+             MOVEA.L     #0, A2
+             MOVEA.L     #0, A3
+             MOVEA.L     #0, A4
+             MOVEA.L     #0, A5
+             MOVEA.L     #0, A6
+             MOVEA.L     #0, A7
+
+* Clear memory locations that variables used 
+             CLR.L       StartAddr
+             CLR.L       EndAddr
+    
+             BRA         START
 
 quit    
              MOVE.B      #9, D0 
@@ -172,8 +273,12 @@ quit
 CR           EQU     $0D
 LF           EQU     $0A
 
+EmptyChar    DC.W    '', 0
+SpaceChar    DC.W ' ', 0
+
 EndAddr      EQU     $500                        ; store end address, avoid overwriting 
 StartAddr    EQU     $600                        ; store start address, avoid overwriting 
+Cur4bits     EQU     $400                        ; store first four bits
 
 * introduction message 
 IntroMsg     DC.B    '**************************************************************',CR,LF     
@@ -187,14 +292,16 @@ AskEndAddr   DC.B 'Enter ending address in hexadecimal:', CR, LF, 0
 
 AskToCont    DC.B 'Press Enter to continue:', 0
 
-AskToRestart DC.B 'Enter 0 to exit program or 1 to restart the program: ', 0
+AskRestartOrExitMsg DC.B 'Enter 0 to exit program or 1 to restart the program: ', 0
 
 * Error message
-InvalidAddrMessage  DC.B 'Invalid Address: input not valid hex value', CR, LF, 0
+InvalidStartMessage  DC.B 'Invalid Start Address: input not valid hex value', CR, LF, 0
+InvalidEndMessage  DC.B 'Invalid End Address: input not valid hex value or End <= Start', CR, LF, 0
 
               END    START        ; last line of source
               
               
+
 
 
 
