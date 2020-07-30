@@ -11,10 +11,10 @@ START:                  ; first instruction of program
 LoadOutputValues
     LEA      Values,A7
     MOVE.L   PrintPointer,A1
-    MOVE.L   #$00001010,A4
+    ;MOVE.L   #$00001010,A4
     
-    JSR      PrintAddr
-    JSR      PrintLine
+    ;JSR      PrintAddr
+    ;JSR      PrintLine
     
     MOVE.B   10(A7),(A1)+        *A
     MOVE.B   13(A7),(A1)+        *D
