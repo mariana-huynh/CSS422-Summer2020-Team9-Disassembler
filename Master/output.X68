@@ -8,18 +8,21 @@
 START:                  ; first instruction of program
 
 * Put program code here
-LoadOutputValues
+Start
     LEA      Values,A6
-    MOVE.B   #0,A5
+    MOVE.B   #0,D6
     MOVE.L   PrintPointer,A1
     MOVE.L   #$00001010,A4
-    
-    JSR      PrintAddr
-    JSR      Print
-    
-    JSR      PrintAddA
+
+Test
+    CMP.B    #40,D6
+    BGT      Quit
+    CMP.B    #9,D6
+    MOVE.B   (A6,D6),(A1)+
     JSR      PrintLine
+    JSR      Test
     
+Quit
     MOVE.B   #9,D0
     TRAP     #15
     
@@ -32,6 +35,63 @@ Print
     
 PrintLine
     MOVE.B   #$00,(A1)               *Terminator for trap 13 - "hey! stop printing!"
+    ADD.B    #1,D6
+    MOVE.B   D6,D0
+    BRA      TestWaited
+    
+TestWaited
+    SUB.B    #30,D0
+    CMP.B    #0,D0
+    BEQ      WaitMore
+    BLT      GoAheadAndPrint
+    BGT      TestWaited
+    
+WaitMore
+    LEA      WaitForMore,A1
+    MOVE.B   #14,D0
+    TRAP     #15
+    MOVE.B   #5,D0
+    TRAP     #15
+    BRA      ClearConsole
+    
+ClearConsole
+    MOVE.B   #' ',(A1)+
+    MOVE.B   #$00,(A1)
+    MOVE.B   #13,D0
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    TRAP     #15
+    
+GoAheadAndPrint
     MOVE.L   PrintPointer,A1
     MOVE.B   #13,D0
     TRAP     #15
@@ -298,6 +358,9 @@ PrintSpace
     SIMHALT             ; halt simulator
 
 * Put variables and constants here
+CR              EQU    $0D
+LF              EQU    $0A
+WaitForMore     DC.B   'Max number of lines on screen. Press any key to continue dissassembling', CR, LF, 0
 Values          DC.B   '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','.',',','$','(',')','#','+','-',' ' 
 *                       0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40  41  42  43  44
 PrintPointer    DC.L   $3500
