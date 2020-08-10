@@ -10,6 +10,7 @@ START:                  ; first instruction of program
 * Put program code here
 LoadOutputValues
     LEA      Values,A6
+    MOVE.B   #0,A5
     MOVE.L   PrintPointer,A1
     MOVE.L   #$00001010,A4
     
@@ -92,6 +93,31 @@ RightTwenty
     LSR.L    #8,D6
     LSR.L    #8,D6
     LSR.L    #4,D6
+    RTS
+
+** General
+NotFound
+    MOVE.B   30(A6),(A1)+        *U
+    MOVE.B   23(A6),(A1)+        *N
+    MOVE.B   20(A6),(A1)+        *K
+    MOVE.B   24(A6),(A1)+        *O
+    MOVE.B   32(A6),(A1)+        *W
+    MOVE.B   23(A6),(A1)+        *N
+    RTS
+    
+PrintDataReg
+    MOVE.B   13(A6),(A1)+        *D
+    JSR      PrintRegNum
+    RTS
+    
+PrintAddrReg
+    MOVE.B   10(A6),(A1)+        *A
+    JSR      PrintRegNum
+    RTS
+    
+PrintRegNum
+    * Change to correct data register later
+    MOVE.B   (A6,D5),(A1)+
     RTS
 
 ** OPCodes
@@ -272,12 +298,13 @@ PrintSpace
     SIMHALT             ; halt simulator
 
 * Put variables and constants here
-Values       DC.B  '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','.',',','$','(',')','#','+','-',' ' 
-*                   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40  41  42  43  44
+Values          DC.B   '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','.',',','$','(',')','#','+','-',' ' 
+*                       0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40  41  42  43  44
 PrintPointer    DC.L   $3500
 
 
     END    START        ; last line of source
+
 
 
 *~Font name~Courier New~
