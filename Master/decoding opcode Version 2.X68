@@ -65,16 +65,14 @@ DecodingMachineCode
 
 
 *************************************************                LSL_ASL_Opcode                  *************************************************
-; first four bit is (1110 #### #### ####)
-
-; D0 will hold the count or register (position 11-9)
-; D1 will hold the size (position 7-6)          
+; first four bit is (1110 #### #### ####)         
 LSL_ASL_Opcode  
             MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 11-9) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us which is count or register it is
             
             MOVE.L  D5,D0          ; D0 will hold the count or register 
-            
+       ; D0 will hold the count or register (position 11-9)
+     
             MOVE.L  #1,D4          ; get the next 1 bit from (A4)(position 8) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 1 bit of (A4), which tell us the direction
             
@@ -87,8 +85,9 @@ LSL_ASL_Opcode
             CMP.L   #3,D5          ; if size is 3 then it is a memory shift
             JMP     MemShift
             
-            MOVE.L  D5,D1          ; D1 will hold the size
-            
+            MOVE.L  D5,D1          ; D1 will hold the size      
+       ; D1 will hold the size (position 7-6) 
+     
             MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 5-3) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us immediate shift count or register shift count
 
@@ -104,33 +103,81 @@ LSL_ASL_Opcode
             CMP.L   #5,D5           ; D5 is 3 bit from (A4)(position 5-3), if 5 mean it is a LSL by Register
             BEQ     LSL_Register_Opcode
             
+            JMP     InvalidOpcode       ; if it is not invalid because position 5-3 did not match any posibility
+            
 ASL_Count_Opcode
             MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us which register
             
-            ;print ASL
-            ;print size from D1
+            JSR     ASL_Output_Size    ;output ASL and size from D1
             
             JSR     CheckCount     ; change D0 to 8 if D0 equal to 0
             ;print #<1-8> from D0
             ;print ,Dy from D5  
             
             RTS                    ; Return to get more input
+            
+ASL_Output_Size    ; subroutine for outputting size from D1
+            CMP.L   #0,D1           ; if D1 is 0 it is byte size
+            BEQ     ASL_Output_Byte
+            
+            CMP.L   #1,D1           ; if D1 is 1 it is word size
+            BEQ     ASL_Output_Word
+            
+            CMP.L   #2,D1           ; if D1 is 2 it is long size
+            BEQ     ASL_Output_Long
+            
+            JMP     InvalidOpcode    ; if it is not 0,1,2 it is not a valid size
+
+ASL_Output_Byte
+            ;print ASL.B
+            RTS                     ; return from subroutine            
+  
+ASL_Output_Word
+            ;print ASL.W
+            RTS                     ; return from subroutine    
+    
+ASL_Output_Long       
+            ;print ASL.L
+            RTS                     ; return from subroutine        
 
 
 LSL_Count_Opcode
             MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us which register
             
-            ;print LSL
-            ;print size from D1
+            JSR     LSL_Output_Size    ;output LSL and size from D1
             
             JSR     CheckCount     ; change D0 to 8 if D0 equal to 0
             ;print #<1-8> from # = D0
             ;print ,Dy from y = D5
             
             RTS                    ; Return to get more input
+
+LSL_Output_Size    ; subroutine for outputting size from D1
+            CMP.L   #0,D1           ; if D1 is 0 it is byte size
+            BEQ     LSL_Output_Byte
             
+            CMP.L   #1,D1           ; if D1 is 1 it is word size
+            BEQ     LSL_Output_Word
+            
+            CMP.L   #2,D1           ; if D1 is 2 it is long size
+            BEQ     LSL_Output_Long
+            
+            JMP     InvalidOpcode    ; if it is not 0,1,2 it is not a valid size
+
+LSL_Output_Byte
+            ;print LSL.B
+            RTS                     ; return from subroutine            
+  
+LSL_Output_Word
+            ;print LSL.W
+            RTS                     ; return from subroutine    
+    
+LSL_Output_Long       
+            ;print LSL.L
+            RTS                     ; return from subroutine        
+     
 CheckCount  ; Subroutine for change D0 to 8 if D0 equal to 0
             CMP.L   #0,D1
             BEQ     D0_to_8  
@@ -143,9 +190,7 @@ ASL_Register_Opcode
             MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us which register
             
-            ;print ASL
-            ;print size from D1
-            
+            JSR     ASL_Output_Size    ;output ASL and size from D1            
             ;print Dx from x = D0
             ;print ,Dy from y = D5
             
@@ -156,8 +201,7 @@ LSL_Register_Opcode
             MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us which register
             
-            ;print LSL
-            ;print size from D1
+            JSR     LSL_Output_Size    ;output ASL and size from D1
             
             ;print Dx from x = D0
             ;print ,Dy from y = D5
@@ -165,68 +209,131 @@ LSL_Register_Opcode
             RTS                    ; Return to get more input
 
 MemShift    ; D0 will hold the count or register (position 11-9)
-            ; D1 will hold the mode (position 5-3)
             CMP.L   #1,D0
             BEQ     LSL_MemShift
             CMP.L   #0,D0
             BEQ     ASL_MemShift
             JMP     InvalidOpcode  ; for memory shift (position 11-9)need to be 0 or 1
 
-LSL_MemShift; D1 will hold the mode (position 5-3)
-            ;print LSL.W            
+LSL_MemShift     ; D5 should hold the value of position 5-3        
             MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 5-3) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us mode
             
-            CMP.L   #2,D5          ; check if mode is in valid range
-            BLT     InvalidOpcode  ; if it is less then 2 it is not valid
-            CMP.L   #5,D5          ; if it is less then 5 it is not valid
-            BEQ     InvalidOpcode  
-            CMP.L   #6,D5          ; if it is less then 6 it is not valid
-            BEQ     InvalidOpcode  
-            MOVE.L  D5,D1          ; D1 will hold the mode (position 5-3)
+            CMP.L   #2,D5               ; if position 5-3 is 2 then it is mode 2
+            BEQ     LSL_MemShift_Mode_2
             
-            MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
-            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us register
-            CMP.L   #7,D1
-            BEQ     Shift_Mode_7
+            CMP.L   #3,D5               ; if position 5-3 is 3 then it is mode 3
+            BEQ     LSL_MemShift_Mode_3
             
-            ;print <ea> mode is D1, register number is in D5
-            
-ASL_MemShift
-            ;print LSL.W 
-            MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 5-3) in to D5
-            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us mode
-            
-            CMP.L   #2,D5          ; check if mode is in valid range
-            BLT     InvalidOpcode  ; if it is less then 2 it is not valid
-            CMP.L   #5,D5          ; if it is less then 5 it is not valid
-            BEQ     InvalidOpcode  
-            CMP.L   #6,D5          ; if it is less then 6 it is not valid
-            BEQ     InvalidOpcode  
-            MOVE.L  D5,D1          ; D1 will hold the mode (position 5-3)
-            
-            MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
-            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us register
-            CMP.L   #7,D1
-            BEQ     Shift_Mode_7
-            
-            ;print <ea> mode is D1, register number is in D5
+            CMP.L   #4,D5               ; if position 5-3 is 4 then it is mode 4
+            BEQ     LSL_MemShift_Mode_4
 
-Shift_Mode_7
-            CMP.L   #1,D5           ; check if the register is larger than 1
-            BGT     InvalidOpcode   ; if mode is 7 and register is larger than 1, it is invalid    
+            CMP.L   #7,D5               ; if position 5-3 is 7 then it is mode 7
+            BEQ     LSL_MemShift_Mode_7
             
-            CMP.L   #0,D5           
-            BEQ     Shift_xxxW
+            JMP     InvalidOpcode       ; if it is not Addressing mode 2,3,4,7 it is invalid
             
-            CMP.L   #1,D5           
-            BEQ     Shift_xxxL
+LSL_MemShift_Mode_2
+            MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit        ; D5 hold the next 3 bit of (A4), which tell us register
+            ;print LSL.W
+            ;print (An) register number is in D5
+            RTS                    ; Return to get more input
+
+LSL_MemShift_Mode_3
+            MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit        ; D5 hold the next 3 bit of (A4), which tell us register
+            ;print LSL.W
+            ;print (An)+ register number is in D5
+            RTS                    ; Return to get more input
             
-Shift_xxxW
+LSL_MemShift_Mode_4
+            MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit        ; D5 hold the next 3 bit of (A4), which tell us register
+            ;print LSL.W
+            ;print -(An) register number is in D5
+            RTS                    ; Return to get more input
+            
+LSL_MemShift_Mode_7
+            MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit        ; D5 hold the next 3 bit of (A4), which tell us register
+            
+            CMP.L   #1,D5               ; check if the register is 1
+            BEQ     LSL_MemShift_xxxL   ; if mode is 7 and register is 1, it is <xxx>.L
+                
+            CMP.L   #0,D5               ; check if the register is 0
+            BEQ     LSL_MemShift_xxxW   ; if mode is 7 and register is 1, it is <xxx>.W
+            
+            JMP     InvalidOpcode       ; if it is not <xxx>.W or <xxx>.L
+            
+LSL_MemShift_xxxW  
+            ;print LSL.W
             ;print <xxx>.W
             RTS                    ; Return to get more input
             
-Shift_xxxL
+LSL_MemShift_xxxL  
+            ;print LSL.W
+            ;print <xxx>.L
+            RTS                    ; Return to get more input
+       
+ASL_MemShift    ; D5 should hold the value of position 5-3     
+            MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 5-3) in to D5
+            JSR     GetNextD4bit        ; D5 hold the next 3 bit of (A4), which tell us mode
+                   
+            CMP.L   #2,D5               ; if position 5-3 is 2 then it is mode 2
+            BEQ     ASL_MemShift_Mode_2
+            
+            CMP.L   #3,D5               ; if position 5-3 is 3 then it is mode 3
+            BEQ     ASL_MemShift_Mode_3
+            
+            CMP.L   #4,D5               ; if position 5-3 is 4 then it is mode 4
+            BEQ     ASL_MemShift_Mode_4
+
+            CMP.L   #7,D5               ; if position 5-3 is 7 then it is mode 7
+            BEQ     ASL_MemShift_Mode_7
+            
+            JMP     InvalidOpcode       ; if it is not Addressing mode 2,3,4,7 it is invalid
+            
+ASL_MemShift_Mode_2            
+            MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit        ; D5 hold the next 3 bit of (A4), which tell us register
+            ;print ASL.W
+            ;print (An) register number is in D5
+            RTS                    ; Return to get more input
+            
+ASL_MemShift_Mode_3
+            MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit        ; D5 hold the next 3 bit of (A4), which tell us register
+            ;print ASL.W
+            ;print (An)+ register number is in D5
+            RTS                    ; Return to get more input
+            
+ASL_MemShift_Mode_4
+            MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit        ; D5 hold the next 3 bit of (A4), which tell us register
+            ;print ASL.W
+            ;print -(An) register number is in D5
+            RTS                    ; Return to get more input
+            
+ASL_MemShift_Mode_7            
+            MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit        ; D5 hold the next 3 bit of (A4), which tell us register
+            
+            CMP.L   #1,D5               ; check if the register is 1
+            BEQ     ASL_MemShift_xxxL   ; if mode is 7 and register is 1, it is <xxx>.L
+                
+            CMP.L   #0,D5               ; check if the register is 0
+            BEQ     ASL_MemShift_xxxW   ; if mode is 7 and register is 1, it is <xxx>.W
+            
+            JMP     InvalidOpcode  ; if it is not <xxx>.W or <xxx>.L
+            
+ASL_MemShift_xxxW  
+            ;print ASL.W
+            ;print <xxx>.W
+            RTS                    ; Return to get more input
+            
+ASL_MemShift_xxxL  
+            ;print ASL.W
             ;print <xxx>.L
             RTS                    ; Return to get more input
 
@@ -302,7 +409,6 @@ Bcc_32bit_Disp
             RTS                     ; return to input to get more input
             
 
-
 *************************************************                NeedMoreBit                *************************************************
 ;Could be MOVEM, MULS.L, DIVU.L, JSR, NOT, LEA  
 ; first four bit is (0100 #### #### ####)
@@ -339,6 +445,7 @@ NeedMoreBit
             
             CMP.L   #26,D5         ; if position 11-6 equal to 26, it is NOT size long
             BEQ     Not_L_Opcode
+
 
 *************************************************                Lea_Opcode                 *************************************************  
 ; notice there is no line that say jupm to Lea_Opcode, it should be run automatically of after NeedMoreBit, if it doesn't match other opcode           
@@ -713,7 +820,83 @@ Muls_L_Data ;print MULS.L
 
 *************************************************                Divu_L                 ************************************************* 
 ; first 10 bit is (0100 1100 01## ####) 
-Divu_L
+Divu_L      MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 5-3) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the EA mode
+            
+            CMP.L   #0,D5          ; if position 5-3 is 0 the EA for MULS.L is Dn mode 0
+            BEQ     Divu_L_M0
+            
+            CMP.L   #2,D5          ; if position 5-3 is 2 the EA for MULS.L is (An) mode 2
+            BEQ     Divu_L_M2
+            
+            CMP.L   #3,D5          ; if position 5-3 is 3 the EA for MULS.L is (An)+ mode 3
+            BEQ     Divu_L_M3
+            
+            CMP.L   #4,D5          ; if position 5-3 is 4 the EA for MULS.L is -(An) mode 4
+            BEQ     Divu_L_M4       
+            
+            CMP.L   #7,D5          ; if position 5-3 is 7 the EA for MULS.L is mode 7
+            BEQ     Divu_L_M7
+            
+            JMP     InvalidOpcode  ; if it is not one of the moveM EA mode
+
+Divu_L_M0   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print DIVU.L            
+            ;print Dn register number is in D5
+            ;print ,destination address
+            RTS                     ; return to input to get more input
+
+Divu_L_M2   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print DIVU.L            
+            ;print (An) register number is in D5
+            ;print ,destination address
+            RTS                     ; return to input to get more input
+            
+Divu_L_M3   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print DIVU.L            
+            ;print (An)+ register number is in D5
+            ;print ,destination address
+            RTS                     ; return to input to get more input
+            
+Divu_L_M4   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print DIVU.L            
+            ;print -(An) register number is in D5
+            ;print ,destination address
+            RTS                     ; return to input to get more input        
+        
+Divu_L_M7   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            
+            CMP.L   #0,D5          ; if position 2-0 is 0 the EA is (xxx).W
+            BEQ     Divu_L_xxxW
+            
+            CMP.L   #1,D5          ; if position 2-0 is 1 the EA is (xxx).L
+            BEQ     Divu_L_xxxL
+            
+            CMP.L   #4,D5          ; if position 2-0 is 1 the EA is (xxx).L
+            BEQ     Divu_L_Data
+            
+            JMP     InvalidOpcode  ; for mode 7 if register is not 0 or 1 or 4, Divu.L is invaid
+            
+Divu_L_xxxW ;print DIVU.L            
+            ;print (xxx).W
+            ;print ,destination address
+            RTS                     ; return to input to get more input
+
+Divu_L_xxxL ;print DIVU.L            
+            ;print (xxx).L 
+            ;print ,destination address
+            RTS                     ; return to input to get more input
+          
+Divu_L_Data ;print DIVU.L            
+            ;print #<data>
+            ;print ,destination address
+            RTS                     ; return to input to get more input    
+
 
 *************************************************                JSR_Opcode             *************************************************
 ; first 10 bit is (0100 1110 10## ####)  
@@ -752,6 +935,7 @@ JSR_xxxW    ;print JSR
 JSR_xxxL    ;print JSR          
             ;print (xxx).L 
             RTS                     ; return to input to get more input
+            
 
 *************************************************                Not_B_Opcode           *************************************************
 ; first 10 bit is (0100 0110 00## ####)
@@ -818,6 +1002,7 @@ Not_B_xxxW  ;print NOT.B
 Not_B_xxxL  ;print NOT.B          
             ;print (xxx).L 
             RTS                     ; return to input to get more input
+
 
 *************************************************                Not_W_Opcode           *************************************************
 ; first 10 bit is (0100 0110 01## ####)
@@ -1004,6 +1189,7 @@ next_code   RTS         ; return from subroutine
 * Put variables and constants here
 
     END    START        ; last line of source
+
 
 
 *~Font name~Courier New~
