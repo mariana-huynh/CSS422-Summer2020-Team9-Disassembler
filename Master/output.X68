@@ -17,7 +17,6 @@ Start
 Test
     CMP.B    #40,D6
     BGT      Quit
-    CMP.B    #9,D6
     MOVE.B   (A6,D6),(A1)+
     JSR      PrintLine
     JSR      Test
@@ -52,44 +51,7 @@ WaitMore
     TRAP     #15
     MOVE.B   #5,D0
     TRAP     #15
-    BRA      ClearConsole
-    
-ClearConsole
-    MOVE.B   #' ',(A1)+
-    MOVE.B   #$00,(A1)
-    MOVE.B   #13,D0
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
-    TRAP     #15
+    BRA      GoAheadAndPrint
     
 GoAheadAndPrint
     MOVE.L   PrintPointer,A1
@@ -176,8 +138,7 @@ PrintAddrReg
     RTS
     
 PrintRegNum
-    * Change to correct data register later
-    MOVE.B   (A6,D5),(A1)+
+    MOVE.B   (A6,D7),(A1)+
     RTS
 
 ** OPCodes
