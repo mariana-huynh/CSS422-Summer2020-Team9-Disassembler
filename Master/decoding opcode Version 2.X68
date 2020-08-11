@@ -685,13 +685,13 @@ Muls_L_M4   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 Muls_L_M7   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
             
-            CMP.L   #0,D5          ; if position 2-0 is 0 the EA for MoveM is (xxx).W
+            CMP.L   #0,D5          ; if position 2-0 is 0 the EA is (xxx).W
             BEQ     Muls_L_xxxW
             
-            CMP.L   #1,D5          ; if position 2-0 is 1 the EA for MoveM is (xxx).L
+            CMP.L   #1,D5          ; if position 2-0 is 1 the EA is (xxx).L
             BEQ     Muls_L_xxxL
             
-            CMP.L   #4,D5          ; if position 2-0 is 1 the EA for MoveM is (xxx).L
+            CMP.L   #4,D5          ; if position 2-0 is 1 the EA is (xxx).L
             BEQ     Muls_L_Data
             
             JMP     InvalidOpcode  ; for mode 7 if register is not 0 or 1 or 4, MULS.L is invaid
@@ -717,24 +717,244 @@ Divu_L
 
 *************************************************                JSR_Opcode             *************************************************
 ; first 10 bit is (0100 1110 10## ####)  
-JSR_Opcode
+JSR_Opcode  MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 5-3) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the EA mode
+            
+            CMP.L   #2,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     JSR_M2
+            
+            CMP.L   #7,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     JSR_M7
+            
+            JMP     InvalidOpcode  ; if it is not a valid JSR EA mode if it is not 2 or 7
+
+JSR_M2      MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print JSR            
+            ;print (An) register number is in D5
+            RTS                     ; return to input to get more input
+
+JSR_M7      MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            
+            CMP.L   #0,D5          ; if position 2-0 is 0 the EA is (xxx).W
+            BEQ     JSR_xxxW
+            
+            CMP.L   #1,D5          ; if position 2-0 is 1 the EA is (xxx).L
+            BEQ     JSR_xxxL
+            
+            JMP     InvalidOpcode  ; for mode 7 if register is not 0 or 1, it is not a vaid JSR EA mode
+
+JSR_xxxW    ;print JSR          
+            ;print (xxx).W 
+            RTS                     ; return to input to get more input
+            
+JSR_xxxL    ;print JSR          
+            ;print (xxx).L 
+            RTS                     ; return to input to get more input
 
 *************************************************                Not_B_Opcode           *************************************************
 ; first 10 bit is (0100 0110 00## ####)
 Not_B_Opcode
+            MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 5-3) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the EA mode
+
+            CMP.L   #0,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     Not_B_M0
+            
+            CMP.L   #2,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     Not_B_M2
+
+            CMP.L   #3,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     Not_B_M3
+            
+            CMP.L   #4,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     Not_B_M4
+
+            CMP.L   #7,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     Not_B_M7
+
+            JMP     InvalidOpcode  ; if it is not a valid NOT EA mode if it is not 0 2 3 4 7
+
+Not_B_M0    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print NOT.B            
+            ;print Dn register number is in D5
+            RTS                     ; return to input to get more input
+
+Not_B_M2    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print NOT.B            
+            ;print (An) register number is in D5
+            RTS                     ; return to input to get more input
+            
+Not_B_M3    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print NOT.B            
+            ;print (An)+ register number is in D5
+            RTS                     ; return to input to get more input
+            
+Not_B_M4    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print NOT.B            
+            ;print -(An) register number is in D5
+            RTS                     ; return to input to get more input
+            
+Not_B_M7    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            
+            CMP.L   #0,D5          ; if position 2-0 is 0 the EA is (xxx).W
+            BEQ     Not_B_xxxW
+            
+            CMP.L   #1,D5          ; if position 2-0 is 1 the EA is (xxx).L
+            BEQ     Not_B_xxxL
+            
+            JMP     InvalidOpcode  ; for mode 7 if register is not 0 or 1, it is not a vaid NOT EA mode
+
+Not_B_xxxW  ;print NOT.B          
+            ;print (xxx).W 
+            RTS                     ; return to input to get more input
+            
+Not_B_xxxL  ;print NOT.B          
+            ;print (xxx).L 
+            RTS                     ; return to input to get more input
 
 *************************************************                Not_W_Opcode           *************************************************
 ; first 10 bit is (0100 0110 01## ####)
 Not_W_Opcode
+            MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 5-3) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the EA mode
+
+            CMP.L   #0,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     Not_W_M0
+            
+            CMP.L   #2,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     Not_W_M2
+
+            CMP.L   #3,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     Not_W_M3
+            
+            CMP.L   #4,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     Not_W_M4
+
+            CMP.L   #7,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     Not_W_M7
+
+            JMP     InvalidOpcode  ; if it is not a valid NOT EA mode if it is not 0 2 3 4 7
+
+Not_W_M0    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print NOT.W            
+            ;print Dn register number is in D5
+            RTS                     ; return to input to get more input
+
+Not_W_M2    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print NOT.W            
+            ;print (An) register number is in D5
+            RTS                     ; return to input to get more input
+            
+Not_W_M3    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print NOT.W            
+            ;print (An)+ register number is in D5
+            RTS                     ; return to input to get more input
+            
+Not_W_M4    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print NOT.W            
+            ;print -(An) register number is in D5
+            RTS                     ; return to input to get more input
+            
+Not_W_M7    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            
+            CMP.L   #0,D5          ; if position 2-0 is 0 the EA is (xxx).W
+            BEQ     Not_W_xxxW
+            
+            CMP.L   #1,D5          ; if position 2-0 is 1 the EA is (xxx).L
+            BEQ     Not_W_xxxL
+            
+            JMP     InvalidOpcode  ; for mode 7 if register is not 0 or 1, it is not a vaid NOT EA mode
+
+Not_W_xxxW  ;print NOT.W          
+            ;print (xxx).W 
+            RTS                     ; return to input to get more input
+            
+Not_W_xxxL  ;print NOT.W          
+            ;print (xxx).L 
+            RTS                     ; return to input to get more input
+
 
 *************************************************                Not_L_Opcode           *************************************************
 ; first 10 bit is (0100 0110 10## ####)
 Not_L_Opcode
+            MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 5-3) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the EA mode
 
+            CMP.L   #0,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     Not_L_M0
+            
+            CMP.L   #2,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     Not_L_M2
 
+            CMP.L   #3,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     Not_L_M3
+            
+            CMP.L   #4,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     Not_L_M4
 
+            CMP.L   #7,D5          ; if position 5-3 is 2 the EA is (An) mode 2
+            BEQ     Not_L_M7
 
+            JMP     InvalidOpcode  ; if it is not a valid NOT EA mode if it is not 0 2 3 4 7
 
+Not_L_M0    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print NOT.L
+            ;print Dn register number is in D5
+            RTS                     ; return to input to get more input
+
+Not_L_M2    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print NOT.L
+            ;print (An) register number is in D5
+            RTS                     ; return to input to get more input
+            
+Not_L_M3    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print NOT.L
+            ;print (An)+ register number is in D5
+            RTS                     ; return to input to get more input
+            
+Not_L_M4    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            ;print NOT.L
+            ;print -(An) register number is in D5
+            RTS                     ; return to input to get more input
+            
+Not_L_M7    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
+            JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
+            
+            CMP.L   #0,D5          ; if position 2-0 is 0 the EA is (xxx).W
+            BEQ     Not_L_xxxW
+            
+            CMP.L   #1,D5          ; if position 2-0 is 1 the EA is (xxx).L
+            BEQ     Not_L_xxxL
+            
+            JMP     InvalidOpcode  ; for mode 7 if register is not 0 or 1, it is not a vaid NOT EA mode
+
+Not_L_xxxW  ;print NOT.L
+            ;print (xxx).W 
+            RTS                     ; return to input to get more input
+            
+Not_L_xxxL  ;print NOT.L
+            ;print (xxx).L 
+            RTS                     ; return to input to get more input
+            
+            
+            
+            
 
 *************************************************                MOVE.W_Opcode          *************************************************
 ; first four bit is (0011 #### #### ####)
@@ -751,10 +971,15 @@ MOVE.B_Opcode
 
 
 
+
+*************************************************                Invaid Handle          *************************************************
+
 InvalidOpcode  ; don't use JSR to get here. Use JMP. If use JSR, RTS will not go back to input
-            JSR     NotFound        ; Call Output NotFound subroutine, since it did not match with any first 4 bit of the opcode
+            JSR     NotFound        ; Call Output NotFound subroutine to print, since it did not match with any posible opcode
             RTS                     ; Return to input to get more input
             
+*************************************************                Subroutine             *************************************************  
+          
 GetNextD4bit ; Subroutine for get the next (D4) bit from (A4) in to D5
              ; D4 should contain the number of loop you want to do
             MOVE.L  #0,D3          ; initialize D3 to 0
