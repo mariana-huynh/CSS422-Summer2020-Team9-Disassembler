@@ -165,38 +165,39 @@ DispInvalidEndError
 * Opcode Parsing 
 ReadNextLoop      
              CMPA.L      A3,A2
-             BGE         AskExitOrRestart
+             ;BGE         AskExitOrRestart
+             BRA         AskExitOrRestart
              
-StartParse
-             BSR         CheckIf20Lines
-             JSR         DispAddr
-             MOVE.W      (A2)+, D7               *Testing for MOVE
-             JSR         ParseOpcode
-             JMP         ReadNextLoop
+*StartParse
+*             BSR         CheckIf20Lines
+*             JSR         DispAddr
+*             MOVE.W      (A2)+, D7               *Testing for MOVE
+*             JSR         ParseOpcode
+*             JMP         ReadNextLoop
     
-CheckIf20Lines
-             ADD         #1, D2				     ; D2 = counter for number of lines 									
-             CMP         #20, D2 				
-										
-             BGE         EnterToCont          	 ; if 20 lines in ouput console, display press enter 
-             LEA         EmptyChar, A1			
-             MOVE.B      #14, D0
-             TRAP        #15
+*CheckIf20Lines
+*             ADD         #1, D2				     ; D2 = counter for number of lines 									
+*             CMP         #20, D2 				
+*										
+*             BGE         EnterToCont          	 ; if 20 lines in ouput console, display press enter 
+*             LEA         EmptyChar, A1			
+*             MOVE.B      #14, D0
+*             TRAP        #15
+*    
+*             RTS
     
-             RTS
+*EnterToCont
+*             JSR         DispPressEnter          ; ask user to press enter to continue
+*             MOVE        #0, D2		             ; set D2 counter back to 0
+*             MOVE.B      #5, D0
+*             TRAP        #15	
+*             RTS	  
     
-EnterToCont
-             JSR         DispPressEnter          ; ask user to press enter to continue
-             MOVE        #0, D2		             ; set D2 counter back to 0
-             MOVE.B      #5, D0
-             TRAP        #15	
-             RTS	  
-    
-DispPressEnter
-             LEA         AskToCont,A1
-             MOVE.B      #14, D0
-             TRAP        #15
-             RTS
+*DispPressEnter
+*             LEA         AskToCont,A1
+*             MOVE.B      #14, D0
+*             TRAP        #15
+*             RTS
 
 DispAddr
              MOVE.L      A2, D5 				  ; store current address to D5 
@@ -215,11 +216,177 @@ DispSpaceChar
              TRAP        #15
              RTS
     
-HexToAscii  ; not coded yet
+HexToAscii  
+             LEA         HexJumpTable,A4           ; move subroutine to A4
+    
+             MOVE.W      Cur4bits,D3        
+             JSR         ShiftToFirst4bitsD3        
+             MULU        #6,D3
+             JSR         0(A4,D3)
+    
+             MOVE.W      Cur4bits,D3
+             JSR         ShiftToSecond4bitsD3
+             MULU        #6,D3
+             JSR         0(A4,D3)
+    
+             MOVE.W      Cur4bits,D3
+             JSR         ShiftToThird4bitsD3
+             MULU        #6,D3
+             JSR         0(A4,D3)
+    
+             MOVE.W      Cur4bits,D3
+             JSR         ShiftToFourth4bitsD3
+             MULU        #6,D3
+             JSR         0(A4,D3)
+    
+             CLR.W       D3
+             RTS
+
+ShiftToFirst4bitsD3    
+             LSR         #8,D3      ; shift 8 bits to right
+             LSR         #4,D3      ; shift 4 bits to right, now left most 4 bits is now right-most 4 bits
+             RTS
+
+ShiftToSecond4bitsD3  
+             LSL         #4,D3      ; shift out left most 4 bits  
+             LSR         #4,D3      ; return the original place
+             LSR         #8,D3      ; shift out two rightmost 4 bits 
+             RTS
+
+ShiftToThird4bitsD3    
+             LSL         #8,D3      ; shift out two left most 4 bits 
+             LSR         #8,D3      ; shift bits back to original position 
+             LSR         #4,D3      ; shift out rightmost 4 bits 
+             RTS
+
+ShiftToFourth4bitsD3   
+             LSL         #8,D3	    ; shift out two left most 4 bits 
+             LSL         #4,D3	    ; shift out third left most 4 bits 
+             LSR         #8,D3	    ; return to original position 
+             LSR         #4,D3
+             RTS
+
+HexJumpTable
+             JMP         Disp0
+             JMP         Disp1
+             JMP         Disp2
+             JMP         Disp3
+             JMP         Disp4
+             JMP         Disp5
+             JMP         Disp6
+             JMP         Disp7
+             JMP         Disp8
+             JMP         Disp9
+             
+             JMP         DispA
+             JMP         DispB
+             JMP         DispC
+             JMP         DispD
+             JMP         DispE
+             JMP         DispF
+             
+* Display Hex Numbers 
+Disp0
+             LEA         STR0,A1
+             MOVE.B      #14,D0
+             TRAP        #15
+             RTS
+
+Disp1
+             LEA         STR1,A1
+             MOVE.B      #14,D0
+             TRAP        #15
+             RTS
+
+Disp2
+             LEA         STR2,A1
+             MOVE.B      #14,D0
+             TRAP        #15
+             RTS
+
+Disp3
+             LEA         STR3,A1
+             MOVE.B      #14,D0
+             TRAP        #15
+             RTS
+
+Disp4
+             LEA         STR4,A1
+             MOVE.B      #14,D0
+             TRAP        #15
+             RTS
+
+Disp5
+             LEA         STR5,A1
+             MOVE.B      #14,D0
+             TRAP        #15
+             RTS
+
+Disp6
+             LEA         STR6,A1
+             MOVE.B      #14,D0
+             TRAP        #15
+             RTS
+
+Disp7
+             LEA         STR7,A1
+             MOVE.B      #14,D0
+             TRAP        #15
+             RTS
+
+Disp8
+             LEA         Str8,A1
+             MOVE.B      #14,D0
+             TRAP        #15
+             RTS
+
+Disp9
+             LEA         Str9,A1
+             MOVE.B      #14,D0
+             TRAP        #15
+             RTS
+
+* Display Hex Letters 
+DispA 
+             LEA         STRA,A1
+             MOVE.B      #14,D0
+             TRAP        #15
+             RTS
+
+DispB
+             LEA         STRB,A1
+             MOVE.B      #14,D0
+             TRAP        #15
+             RTS
+
+DispC
+             LEA         STRC,A1
+             MOVE.B      #14,D0
+             TRAP        #15
+             RTS
+    
+DispD
+             LEA         STRD,A1
+             MOVE.B      #14,D0
+             TRAP        #15
+             RTS
+
+DispE
+             LEA         STRE,A1
+             MOVE.B      #14,D0
+             TRAP        #15
+             RTS
+
+DispF 
+             LEA         STRF,A1
+             MOVE.B      #14,D0
+             TRAP        #15
+             RTS
+
 
 
 * Parse opcode
-ParseOpcode  ; not coded yet 
+ParseOpcode  ; insert hanny's code here  
             
                       
 AskExitOrRestart                           
@@ -290,7 +457,7 @@ AskStartAddr DC.B 'Enter starting address in hexadecimal:', CR, LF, 0
 
 AskEndAddr   DC.B 'Enter ending address in hexadecimal:', CR, LF, 0
 
-AskToCont    DC.B 'Press Enter to continue:', 0
+;AskToCont    DC.B 'Press Enter to continue:', 0
 
 AskRestartOrExitMsg DC.B 'Enter 0 to exit program or 1 to restart the program: ', 0
 
@@ -298,9 +465,33 @@ AskRestartOrExitMsg DC.B 'Enter 0 to exit program or 1 to restart the program: '
 InvalidStartMessage  DC.B 'Invalid Start Address: input not valid hex value', CR, LF, 0
 InvalidEndMessage  DC.B 'Invalid End Address: input not valid hex value or End <= Start', CR, LF, 0
 
+    
+* Hex Srting Numbers                   
+Str0                       DC.W '0', 0
+Str1                       DC.W '1', 0
+Str2                       DC.W '2', 0
+Str3                       DC.W '3', 0
+Str4                       DC.W '4', 0
+Str5                       DC.W '5', 0
+Str6                       DC.W '6', 0
+Str7                       DC.W '7', 0
+Str8                       DC.W '8', 0
+Str9                       DC.W '9', 0
+
+* Hex String Letters                   
+StrA                       DC.W 'A', 0
+StrB                       DC.W 'B', 0
+StrC                       DC.W 'C', 0
+StrD                       DC.W 'D', 0
+StrE                       DC.W 'E', 0
+StrF                       DC.W 'F', 0
+
+
               END    START        ; last line of source
               
               
+
+
 
 
 
