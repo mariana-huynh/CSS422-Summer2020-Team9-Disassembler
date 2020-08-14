@@ -106,6 +106,22 @@ PrintAddr
     CLR.L    D6
     RTS
 
+PrintByteOrWord
+	JSR 	Print
+	MOVE.W	(A4)+,D1
+	MOVE.B	#16,D2
+	MOVE.B  #15,D0
+	TRAP 	#15
+	RTS
+
+PrintLong
+	JSR		Print
+	MOVE.W	(A4)+,D1
+	MOVE.B	#16,D2
+	MOVE.B  #15,D0
+	TRAP 	#15
+	RTS
+
 RightTwentyEight
     LSR.L    #8,D6
     JSR      RightTwenty

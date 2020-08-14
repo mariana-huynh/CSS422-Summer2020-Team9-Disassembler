@@ -303,13 +303,14 @@ LSL_MemShift_Mode_7
 LSL_MemShift_xxxW
 			JSR 	PrintLSL
 			JSR		LengthW
-            ;print <xxx>.W
+			JSR		PrintByteOrWord
+			JSR		LengthW
             RTS                    ; Return to get more input
 
 LSL_MemShift_xxxL
 			JSR 	PrintLSL
 			JSR		LengthW
-            ;print <xxx>.L
+			JSR     PrintLong
             RTS                    ; Return to get more input
 
 ASL_MemShift    ; D5 should hold the value of position 5-3
@@ -369,13 +370,13 @@ ASL_MemShift_Mode_7
 ASL_MemShift_xxxW
 			JSR 	PrintASL
 			JSR		LengthW
-            ;print <xxx>.W
+			JSR		PrintByteOrWord
             RTS                    ; Return to get more input
 
 ASL_MemShift_xxxL
 			JSR 	PrintASL
 			JSR		LengthW
-            ;print <xxx>.L
+			JSR		PrintLong
             RTS                    ; Return to get more input
 
 
@@ -513,7 +514,7 @@ ADD_B_SrcEA_M7
 ADD_B_SrcEA_xxxW
 			JSR 	PrintAdd
 			JSR		LengthB
-            ;print (xxx).w
+			JSR		PrintByteOrWord
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -523,7 +524,7 @@ ADD_B_SrcEA_xxxW
 ADD_B_SrcEA_xxxL
 			JSR 	PrintAdd
 			JSR		LengthB
-            ;print (xxx).L
+			JSR		PrintLong
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -641,7 +642,7 @@ ADD_W_SrcEA_M7
 ADD_W_SrcEA_xxxW
 			JSR 	PrintAdd
 			JSR		LengthW
-            ;print (xxx).w
+			JSR		PrintByteOrWord
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -651,7 +652,7 @@ ADD_W_SrcEA_xxxW
 ADD_W_SrcEA_xxxL
 			JSR 	PrintAdd
 			JSR		LengthW
-            ;print (xxx).L
+			JSR		PrintLong
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -769,7 +770,7 @@ ADD_L_SrcEA_M7
 ADD_L_SrcEA_xxxW
 			JSR 	PrintAdd
 			JSR		LengthL
-            ;print (xxx).w
+			JSR		PrintByteOrWord
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -779,7 +780,7 @@ ADD_L_SrcEA_xxxW
 ADD_L_SrcEA_xxxL
 			JSR 	PrintAdd
 			JSR		LengthL
-            ;print (xxx).L
+			JSR		PrintLong
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -876,7 +877,8 @@ ADD_B_DesEA_xxxW
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print ,(xxx).w
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
 ADD_B_DesEA_xxxL
@@ -888,7 +890,8 @@ ADD_B_DesEA_xxxL
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print (xxx).L
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintLong
             RTS                     ; return to input to get more input
 
 ADD_W_DesEA MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 5-3) in to D5
@@ -971,7 +974,8 @@ ADD_W_DesEA_xxxW
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print ,(xxx).w
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
 ADD_W_DesEA_xxxL
@@ -983,7 +987,8 @@ ADD_W_DesEA_xxxL
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print (xxx).L
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintLong
             RTS                     ; return to input to get more input
 
 ADD_L_DesEA
@@ -1067,7 +1072,8 @@ ADD_L_DesEA_xxxW
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print ,(xxx).w
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
 ADD_L_DesEA_xxxL
@@ -1079,7 +1085,8 @@ ADD_L_DesEA_xxxL
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print (xxx).L
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintLong
             RTS                     ; return to input to get more input
 
 
@@ -1204,7 +1211,7 @@ And_B_SrcEA_M7
 And_B_SrcEA_xxxW
 			JSR 	PrintAnd
 			JSR		LengthB
-            ;print (xxx).w
+			JSR		PrintByteOrWord
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -1214,7 +1221,7 @@ And_B_SrcEA_xxxW
 And_B_SrcEA_xxxL
 			JSR 	PrintAnd
 			JSR		LengthB
-            ;print (xxx).L
+			JSR		PrintLong
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -1317,7 +1324,7 @@ And_W_SrcEA_M7
 And_W_SrcEA_xxxW
 			JSR 	PrintAnd
 			JSR		LengthW
-            ;print (xxx).w
+			JSR		PrintByteOrWord
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -1327,7 +1334,7 @@ And_W_SrcEA_xxxW
 And_W_SrcEA_xxxL
 			JSR 	PrintAnd
 			JSR		LengthW
-            ;print (xxx).L
+			JSR		PrintLong
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -1430,7 +1437,7 @@ And_L_SrcEA_M7
 And_L_SrcEA_xxxW
 			JSR 	PrintAnd
 			JSR		LengthL
-            ;print (xxx).w
+			JSR		PrintByteOrWord
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -1440,7 +1447,7 @@ And_L_SrcEA_xxxW
 And_L_SrcEA_xxxL
 			JSR 	PrintAnd
 			JSR		LengthL
-            ;print (xxx).L
+			JSR		PrintLong
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -1540,7 +1547,8 @@ And_B_DesEA_xxxW
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print ,(xxx).w
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
 And_B_DesEA_xxxL
@@ -1552,7 +1560,8 @@ And_B_DesEA_xxxL
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print ,(xxx).L
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintLong
             RTS                     ; return to input to get more input
 
 And_W_DesEA MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 5-3) in to D5
@@ -1638,7 +1647,8 @@ And_W_DesEA_xxxW
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print ,(xxx).w
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
 And_W_DesEA_xxxL
@@ -1650,7 +1660,8 @@ And_W_DesEA_xxxL
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print ,(xxx).L
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintLong
             RTS                     ; return to input to get more input
 
 And_L_DesEA MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 5-3) in to D5
@@ -1736,7 +1747,8 @@ And_L_DesEA_xxxW
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print ,(xxx).w
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
 And_L_DesEA_xxxL
@@ -1748,7 +1760,8 @@ And_L_DesEA_xxxL
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print ,(xxx).L
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintLong
             RTS                     ; return to input to get more input
 
 MULS_W      MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 5-3) in to D5
@@ -1832,7 +1845,7 @@ MULS_W_M7   MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 
 MULS_W_xxxW
 			JSR 	PrintMuls
 			JSR		LengthW
-            ;print (xxx).w
+			JSR		PrintByteOrWord
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -1842,7 +1855,7 @@ MULS_W_xxxW
 MULS_W_xxxL
 			JSR 	PrintMuls
 			JSR		LengthW
-            ;print (xxx).L
+			JSR		PrintLong
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -1991,7 +2004,7 @@ SUB_B_SrcEA_M7
 SUB_B_SrcEA_xxxW
 			JSR 	PrintSub
 			JSR		LengthB
-            ;print (xxx).w
+			JSR		PrintByteOrWord
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -2001,7 +2014,7 @@ SUB_B_SrcEA_xxxW
 SUB_B_SrcEA_xxxL
 			JSR 	PrintSub
 			JSR		LengthB
-            ;print (xxx).L
+			JSR		PrintLong
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -2120,7 +2133,7 @@ SUB_W_SrcEA_M7
 SUB_W_SrcEA_xxxW
 			JSR 	PrintSub
 			JSR		LengthW
-            ;print (xxx).w
+			JSR		PrintByteOrWord
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -2130,7 +2143,7 @@ SUB_W_SrcEA_xxxW
 SUB_W_SrcEA_xxxL
 			JSR 	PrintSub
 			JSR		LengthW
-            ;print (xxx).L
+			JSR		PrintLong
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -2248,7 +2261,7 @@ SUB_L_SrcEA_M7
 SUB_L_SrcEA_xxxW
 			JSR 	PrintSub
 			JSR		LengthL
-            ;print (xxx).w
+			JSR		PrintByteOrWord
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -2258,7 +2271,7 @@ SUB_L_SrcEA_xxxW
 SUB_L_SrcEA_xxxL
 			JSR 	PrintSub
 			JSR		LengthL
-            ;print (xxx).L
+			JSR		PrintLong
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -2361,7 +2374,8 @@ SUB_B_DesEA_xxxW
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print ,(xxx).w
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
 SUB_B_DesEA_xxxL
@@ -2373,7 +2387,8 @@ SUB_B_DesEA_xxxL
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print ,(xxx).L
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintLong
             RTS                     ; return to input to get more input
 
 SUB_W_DesEA MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 5-3) in to D5
@@ -2462,7 +2477,8 @@ SUB_W_DesEA_xxxW
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print ,(xxx).w
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
 SUB_W_DesEA_xxxL
@@ -2474,7 +2490,8 @@ SUB_W_DesEA_xxxL
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print ,(xxx).L
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintLong
             RTS                     ; return to input to get more input
 
 SUB_L_DesEA MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 5-3) in to D5
@@ -2560,7 +2577,8 @@ SUB_L_DesEA_xxxW
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print ,(xxx).w
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
 SUB_L_DesEA_xxxL
@@ -2572,7 +2590,8 @@ SUB_L_DesEA_xxxL
 			JSR		PrintDataReg
 
 			MOVE.B	D7,D5
-            ;print ,(xxx).L
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintLong
             RTS                     ; return to input to get more input
 
 *************************************************                DIVU_W_Opcode              *************************************************
@@ -2671,7 +2690,7 @@ DIVU_W_M7   MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 
 
 DIVU_W_xxxW JSR 	PrintDivu
 			JSR		LengthW
-            ;print (xxx).W
+			JSR		PrintByteOrWord
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -2680,7 +2699,7 @@ DIVU_W_xxxW JSR 	PrintDivu
 
 DIVU_W_xxxL JSR 	PrintDivu
 			JSR		LengthW
-            ;print (xxx).L
+			JSR		PrintLong
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -2840,7 +2859,7 @@ Lea_M7_Opcode
 
 Lea_xxxW_Opcode
 			JSR PrintLEA
-            ;print (xxx).W
+			JSR		PrintByteOrWord
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -2849,7 +2868,7 @@ Lea_xxxW_Opcode
 
 Lea_xxxL_Opcode
 			JSR PrintLEA
-            ;print (xxx).L
+			JSR		PrintLong
 
 			MOVE.B	D0,D5
 			MOVE.B	37(A6),(A1)+		 *,
@@ -2911,14 +2930,16 @@ MoveM_R2M_W_xxxW
 			JSR PrintMoveM
 			JSR LengthW
             ;print <list>
-            ;print ,(xxx).W
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
 MoveM_R2M_W_xxxL
 			JSR PrintMoveM
 			JSR LengthW
             ;print <list>
-            ;print ,(xxx).L
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintLong
             RTS                     ; return to input to get more input
 
 
@@ -2976,14 +2997,16 @@ MoveM_R2M_L_xxxW
 			JSR PrintMoveM
 			JSR LengthL
             ;print <list>
-            ;print ,(xxx).W
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
 MoveM_R2M_L_xxxL
 			JSR PrintMoveM
 			JSR LengthL
             ;print <list>
-            ;print ,(xxx).L
+			MOVE.B	37(A6),(A1)+		 *,
+			JSR		PrintLong
             RTS                     ; return to input to get more input
 
 *************************************************                MoveM_M2R_W                *************************************************
@@ -3037,14 +3060,14 @@ MoveM_M2R_W_M7
 MoveM_M2R_W_xxxW
 			JSR PrintMoveM
 			JSR LengthW
-            ;print (xxx).W
+			JSR		PrintByteOrWord
             ;print ,<list>
             RTS                     ; return to input to get more input
 
 MoveM_M2R_W_xxxL
 			JSR PrintMoveM
 			JSR LengthW
-            ;print (xxx).L
+			JSR		PrintLong
             ;print ,<list>
             RTS                     ; return to input to get more input
 
@@ -3099,14 +3122,14 @@ MoveM_M2R_L_M7
 MoveM_M2R_L_xxxW
 			JSR PrintMoveM
 			JSR LengthL
-            ;print (xxx).W
+			JSR		PrintByteOrWord
             ;print ,<list>
             RTS                     ; return to input to get more input
 
 MoveM_M2R_L_xxxL
 			JSR PrintMoveM
 			JSR LengthL
-            ;print (xxx).L
+			JSR		PrintLong
             ;print ,<list>
             RTS                     ; return to input to get more input
 
@@ -3180,13 +3203,13 @@ Muls_L_M7   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 Muls_L_xxxW JSR PrintMuls
 			JSR LengthL
-            ;print (xxx).W
+			JSR		PrintByteOrWord
             ;print ,destination address
             RTS                     ; return to input to get more input
 
 Muls_L_xxxL JSR PrintMuls
 			JSR LengthL
-            ;print (xxx).L
+			JSR		PrintLong
             ;print ,destination address
             RTS                     ; return to input to get more input
 
@@ -3266,13 +3289,13 @@ Divu_L_M7   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 Divu_L_xxxW JSR PrintDivu
 			JSR LengthL
-            ;print (xxx).W
+			JSR		PrintByteOrWord
             ;print ,destination address
             RTS                     ; return to input to get more input
 
 Divu_L_xxxL JSR PrintDivu
 			JSR LengthL
-            ;print (xxx).L
+			JSR		PrintLong
             ;print ,destination address
             RTS                     ; return to input to get more input
 
@@ -3314,11 +3337,11 @@ JSR_M7      MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
             JMP     InvalidOpcode  ; for mode 7 if register is not 0 or 1, it is not a vaid JSR EA mode
 
 JSR_xxxW    JSR PrintJSR
-            ;print (xxx).W
+			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
 JSR_xxxL    JSR PrintJSR
-            ;print (xxx).L
+			JSR		PrintLong
             RTS                     ; return to input to get more input
 
 
@@ -3368,8 +3391,8 @@ Not_B_M3    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 Not_B_M4    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
-            JSR PrintNot
-			JSR LengthB
+            JSR 	PrintNot
+			JSR 	LengthB
 			JSR		PrintPreDeincAddrReg
             RTS                     ; return to input to get more input
 
@@ -3384,14 +3407,14 @@ Not_B_M7    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
             JMP     InvalidOpcode  ; for mode 7 if register is not 0 or 1, it is not a vaid NOT EA mode
 
-Not_B_xxxW  JSR PrintNot
-			JSR LengthB
-            ;print (xxx).W
+Not_B_xxxW  JSR 	PrintNot
+			JSR 	LengthB
+			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
-Not_B_xxxL  JSR PrintNot
-			JSR LengthB
-            ;print (xxx).L
+Not_B_xxxL  JSR 	PrintNot
+			JSR 	LengthB
+			JSR		PrintLong
             RTS                     ; return to input to get more input
 
 
@@ -3420,29 +3443,29 @@ Not_W_Opcode
 
 Not_W_M0    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
-            JSR PrintNot
-			JSR LengthW
+            JSR 	PrintNot
+			JSR 	LengthW
             JSR		PrintDataReg
             RTS                     ; return to input to get more input
 
 Not_W_M2    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
-            JSR PrintNot
-			JSR LengthW
+            JSR 	PrintNot
+			JSR 	LengthW
             JSR		PrintIndirAddrReg
             RTS                     ; return to input to get more input
 
 Not_W_M3    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
-            JSR PrintNot
-			JSR LengthW
+            JSR 	PrintNot
+			JSR 	LengthW
 			JSR 	PrintPostIncAddrReg
             RTS                     ; return to input to get more input
 
 Not_W_M4    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
-            JSR PrintNot
-			JSR LengthW
+            JSR 	PrintNot
+			JSR 	LengthW
 			JSR		PrintPreDeincAddrReg
             RTS                     ; return to input to get more input
 
@@ -3457,14 +3480,14 @@ Not_W_M7    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
             JMP     InvalidOpcode  ; for mode 7 if register is not 0 or 1, it is not a vaid NOT EA mode
 
-Not_W_xxxW  JSR PrintNot
-			JSR LengthW
-            ;print (xxx).W
+Not_W_xxxW  JSR 	PrintNot
+			JSR 	LengthW
+			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
-Not_W_xxxL  JSR PrintNot
-			JSR LengthW
-            ;print (xxx).L
+Not_W_xxxL  JSR 	PrintNot
+			JSR 	LengthW
+			JSR		PrintLong
             RTS                     ; return to input to get more input
 
 
@@ -3493,29 +3516,29 @@ Not_L_Opcode
 
 Not_L_M0    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
-            JSR PrintNot
-			JSR LengthL
+            JSR 	PrintNot
+			JSR 	LengthL
             JSR		PrintDataReg
             RTS                     ; return to input to get more input
 
 Not_L_M2    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
-            JSR PrintNot
-			JSR LengthL
+            JSR 	PrintNot
+			JSR 	LengthL
             JSR		PrintIndirAddrReg
             RTS                     ; return to input to get more input
 
 Not_L_M3    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
-            JSR PrintNot
-			JSR LengthL
+            JSR 	PrintNot
+			JSR 	LengthL
 			JSR 	PrintPostIncAddrReg
             RTS                     ; return to input to get more input
 
 Not_L_M4    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
-            JSR PrintNot
-			JSR LengthL
+            JSR 	PrintNot
+			JSR 	LengthL
 			JSR		PrintPreDeincAddrReg
             RTS                     ; return to input to get more input
 
@@ -3530,14 +3553,14 @@ Not_L_M7    MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
             JMP     InvalidOpcode  ; for mode 7 if register is not 0 or 1, it is not a vaid NOT EA mode
 
-Not_L_xxxW  JSR PrintNot
-			JSR LengthL
-            ;print (xxx).W
+Not_L_xxxW  JSR 	PrintNot
+			JSR 	LengthL
+			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
-Not_L_xxxL  JSR PrintNot
-			JSR LengthL
-            ;print (xxx).L
+Not_L_xxxL  JSR 	PrintNot
+			JSR 	LengthL
+			JSR		PrintLong
             RTS                     ; return to input to get more input
 
 
@@ -3598,8 +3621,8 @@ MOVE_W_DesM7_Check
 
 MOVE_W_M0   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the source register
-            JSR PrintMove
-			JSR LengthW
+            JSR 	PrintMove
+			JSR 	LengthW
             JSR		PrintDataReg
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
@@ -3607,8 +3630,8 @@ MOVE_W_M0   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 MOVE_W_M1   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the source register
-            JSR PrintMove
-			JSR LengthW
+            JSR 	PrintMove
+			JSR 	LengthW
             JSR		PrintAddrReg
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
@@ -3616,8 +3639,8 @@ MOVE_W_M1   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 MOVE_W_M2   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the source register
-            JSR PrintMove
-			JSR LengthW
+            JSR 	PrintMove
+			JSR 	LengthW
             JSR		PrintIndirAddrReg
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
@@ -3625,8 +3648,8 @@ MOVE_W_M2   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 MOVE_W_M3   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the source register
-            JSR PrintMove
-			JSR LengthW
+            JSR 	PrintMove
+			JSR 	LengthW
 			JSR 	PrintPostIncAddrReg
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
@@ -3634,8 +3657,8 @@ MOVE_W_M3   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 MOVE_W_M4   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the source register
-            JSR PrintMove
-			JSR LengthW
+            JSR 	PrintMove
+			JSR 	LengthW
 			JSR		PrintPreDeincAddrReg
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
@@ -3655,16 +3678,16 @@ MOVE_W_M7   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
             JMP     InvalidOpcode  ; for mode 7 if Source register is not 0 or 1 or 4, it is not a vaid NOT EA mode
 
-MOVE_W_xxxW JSR PrintMove
-			JSR LengthW
-            ;print (xxx).W
+MOVE_W_xxxW JSR 	PrintMove
+			JSR 	LengthW
+			JSR		PrintByteOrWord
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
             RTS                     ; return to input to get more input
 
-MOVE_W_xxxL JSR PrintMove
-			JSR LengthW
-            ;print (xxx).L
+MOVE_W_xxxL JSR 	PrintMove
+			JSR 	LengthW
+			JSR		PrintLong
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
             RTS                     ; return to input to get more input
@@ -3733,8 +3756,8 @@ MOVE_L_DesM7_Check
 
 MOVE_L_M0   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the source register
-            JSR PrintMove
-			JSR LengthL
+            JSR 	PrintMove
+			JSR 	LengthL
             JSR		PrintDataReg
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
@@ -3742,8 +3765,8 @@ MOVE_L_M0   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 MOVE_L_M1   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the source register
-            JSR PrintMove
-			JSR LengthL
+            JSR 	PrintMove
+			JSR 	LengthL
             JSR		PrintAddrReg
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
@@ -3751,8 +3774,8 @@ MOVE_L_M1   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 MOVE_L_M2   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the source register
-            JSR PrintMove
-			JSR LengthL
+            JSR 	PrintMove
+			JSR 	LengthL
             JSR		PrintIndirAddrReg
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
@@ -3760,8 +3783,8 @@ MOVE_L_M2   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 MOVE_L_M3   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the source register
-            JSR PrintMove
-			JSR LengthL
+            JSR 	PrintMove
+			JSR 	LengthL
 			JSR 	PrintPostIncAddrReg
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
@@ -3769,8 +3792,8 @@ MOVE_L_M3   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 MOVE_L_M4   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the source register
-            JSR PrintMove
-			JSR LengthL
+            JSR 	PrintMove
+			JSR 	LengthL
 			JSR		PrintPreDeincAddrReg
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
@@ -3792,20 +3815,20 @@ MOVE_L_M7   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 MOVE_L_xxxW JSR PrintMove
 			JSR LengthL
-            ;print (xxx).W
+			JSR		PrintByteOrWord
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
             RTS                     ; return to input to get more input
 
-MOVE_L_xxxL JSR PrintMove
-			JSR LengthL
-            ;print (xxx).L
+MOVE_L_xxxL JSR 	PrintMove
+			JSR 	LengthL
+			JSR		PrintLong
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
             RTS                     ; return to input to get more input
 
-MOVE_L_data JSR PrintMove
-			JSR LengthL
+MOVE_L_data JSR 	PrintMove
+			JSR 	LengthL
             ;print #<data>
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
@@ -3869,8 +3892,8 @@ MOVE_B_DesM7_Check
 
 MOVE_B_M0   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the source register
-            JSR PrintMove
-			JSR LengthB
+            JSR 	PrintMove
+			JSR 	LengthB
             JSR		PrintDataReg
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
@@ -3878,8 +3901,8 @@ MOVE_B_M0   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 MOVE_B_M1   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the source register
-            JSR PrintMove
-			JSR LengthB
+            JSR 	PrintMove
+			JSR 	LengthB
             JSR		PrintAddrReg
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
@@ -3887,8 +3910,8 @@ MOVE_B_M1   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 MOVE_B_M2   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the source register
-            JSR PrintMove
-			JSR LengthB
+            JSR 	PrintMove
+			JSR 	LengthB
             JSR		PrintIndirAddrReg
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
@@ -3896,8 +3919,8 @@ MOVE_B_M2   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 MOVE_B_M3   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the source register
-            JSR PrintMove
-			JSR LengthB
+            JSR 	PrintMove
+			JSR 	LengthB
 			JSR 	PrintPostIncAddrReg
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
@@ -3905,8 +3928,8 @@ MOVE_B_M3   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 MOVE_B_M4   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the source register
-            JSR PrintMove
-			JSR LengthB
+            JSR 	PrintMove
+			JSR 	LengthB
 			JSR		PrintPreDeincAddrReg
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
@@ -3928,14 +3951,14 @@ MOVE_B_M7   MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) 
 
 MOVE_B_xxxW JSR PrintMove
 			JSR LengthB
-            ;print (xxx).B
+			JSR		PrintByteOrWord
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
             RTS                     ; return to input to get more input
 
 MOVE_B_xxxL JSR PrintMove
 			JSR LengthB
-            ;print (xxx).B
+			JSR		PrintByteOrWord
             ;print Destination Addressing mode, the mode number is in D1       ; for mode 7, register is valid, since I check in MOVE_DesM7_Check
             ;print Destination Register in D0   ; since this hold nothing useful for mode 7, maybe for have the subroutine take in both D1 and D0
             RTS                     ; return to input to get more input
