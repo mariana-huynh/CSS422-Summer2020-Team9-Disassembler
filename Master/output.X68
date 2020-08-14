@@ -106,6 +106,11 @@ PrintAddr
     CLR.L    D6
     RTS
 
+PrintImmediateData
+	MOVE.B	41(A6),(A1)+		 *#
+	JSR		PrintLong
+	RTS
+
 PrintByteOrWord
 	JSR 	Print
 	MOVE.W	(A4)+,D1
