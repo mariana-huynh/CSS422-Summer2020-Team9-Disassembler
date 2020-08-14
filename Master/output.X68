@@ -10,16 +10,14 @@ START:                  ; first instruction of program
 * Put program code here
 Start
     LEA      Values,A6
-    MOVE.B   #0,D6
     MOVE.L   PrintPointer,A1
-    MOVE.L   #$00001010,A4
 
-Test
-    CMP.B    #40,D6
-    BGT      Quit
-    MOVE.B   (A6,D6),(A1)+
-    JSR      PrintLine
-    JSR      Test
+;Test
+;    CMP.B    #40,D6
+;    BGT      Quit
+;    MOVE.B   (A6,D6),(A1)+
+;    JSR      PrintLine
+;    JSR      Test
 
 Quit
     MOVE.B   #9,D0
