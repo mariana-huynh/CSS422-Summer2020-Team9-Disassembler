@@ -164,11 +164,25 @@ DispInvalidEndError
              TRAP        #15
              RTS
 
-* Opcode Parsing
-ReadNextLoop
-             CMPA.L      A3,A2
+* Opcode Parsing 
+ReadNextLoop      
+             CMPA.L      A4,A2                   ; changed from A3,A2
              ;BGE         AskExitOrRestart
              BRA         AskExitOrRestart
+             
+* load current address to A4 (at the start would be A2)
+* call decodingmachinecode
+*      that should rts back to your code
+* increment address by a word (A4)+
+* check if reached end address 
+* call decodingmachinecode
+
+             ; call Alex's code for checking if full screen
+             ; call Alex's code for displaying the address location
+
+             MOVE.W  (A4)+,D7                   ; read one word at a time and store in D7
+             JSR     DecodingMachineCode
+             JMP     ReadNextLoop
 
 *StartParse
 *             BSR         CheckIf20Lines
@@ -4980,3 +4994,8 @@ Values          DC.B   '0','1','2','3','4','5','6','7','8','9','A','B','C','D','
 PrintPointer    DC.L   $3500
 
               END    START        ; last line of source
+
+*~Font name~Courier New~
+*~Font size~10~
+*~Tab type~1~
+*~Tab size~4~
