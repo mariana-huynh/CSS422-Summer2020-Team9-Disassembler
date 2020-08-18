@@ -168,7 +168,7 @@ ReadNextLoopStart
              MOVE.L      A2,A4
 
 ReadNextLoop
-             CMPA.L      A3,A4                  
+             CMPA.L      A3,A4
              BGE         AskExitOrRestart
 
              ;MOVE.B	     -(A4),A4
@@ -176,7 +176,7 @@ ReadNextLoop
              JSR         PrintLine
 
              JSR         PrintAddr
-             
+
              JSR         DecodingMachineCode
              MOVE.W      (A4)+,D7                   ; read one word at a time and store in D7
              JMP         ReadNextLoop
@@ -219,6 +219,11 @@ ClearEverything
 * Clear memory locations that variables used
              CLR.L       StartAddr
              CLR.L       EndAddr
+
+* Clear output
+			 JSR 	  Print
+		     MOVE.L   PrintPointer,A1
+		     MOVE.B   #0,PrintLines
 
              BRA         START
 
@@ -3249,6 +3254,10 @@ Lea_xxxL_Opcode
 
 
 *************************************************                MoveM_R2M_W                *************************************************
+PrintList
+			MOVE.L	(A4)+,A4
+			RTS
+
 ; MOVEM.W from register to memory
 ; first 10 bit is (0100 1000 10## ####)
 MoveM_R2M_W
@@ -3272,7 +3281,7 @@ MoveM_R2M_W_M2
             JSR 	PrintMoveM
             JSR 	LengthW
 			JSR     PrintSpace
-            ;print <list>
+            JSR		PrintList
 			MOVE.B	37(A6),(A1)+		 *,
             JSR		PrintIndirAddrReg
             RTS                     ; return to input to get more input
@@ -3283,7 +3292,7 @@ MoveM_R2M_W_M4
             JSR 	PrintMoveM
             JSR 	LengthW
 			JSR     PrintSpace
-            ;print <list>
+            JSR		PrintList
 			MOVE.B	37(A6),(A1)+		 *,
 			JSR		PrintPreDeincAddrReg
             RTS                     ; return to input to get more input
@@ -3301,19 +3310,19 @@ MoveM_R2M_W_M7
             JMP     InvalidOpcode  ; for mode 7 if register is not 0 or 1, moveM is invaid
 
 MoveM_R2M_W_xxxW
-			JSR PrintMoveM
-			JSR LengthW
+			JSR 	PrintMoveM
+			JSR 	LengthW
 			JSR     PrintSpace
-            ;print <list>
+            JSR		PrintList
 			MOVE.B	37(A6),(A1)+		 *,
 			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
 MoveM_R2M_W_xxxL
-			JSR PrintMoveM
-			JSR LengthW
+			JSR 	PrintMoveM
+			JSR 	LengthW
 			JSR     PrintSpace
-            ;print <list>
+            JSR		PrintList
 			MOVE.B	37(A6),(A1)+		 *,
 			JSR		PrintLong
             RTS                     ; return to input to get more input
@@ -3340,10 +3349,10 @@ MoveM_R2M_L
 MoveM_R2M_L_M2
             MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
-            JSR PrintMoveM
-            JSR LengthL
+            JSR 	PrintMoveM
+            JSR		LengthL
 			JSR     PrintSpace
-            ;print <list>
+            JSR		PrintList
 			MOVE.B	37(A6),(A1)+		 *,
             JSR		PrintIndirAddrReg
             RTS                     ; return to input to get more input
@@ -3351,10 +3360,10 @@ MoveM_R2M_L_M2
 MoveM_R2M_L_M4
             MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
-            JSR PrintMoveM
-            JSR LengthL
+            JSR 	PrintMoveM
+            JSR 	LengthL
 			JSR     PrintSpace
-            ;print <list>
+            JSR		PrintList
 			MOVE.B	37(A6),(A1)+		 *,
 			JSR		PrintPreDeincAddrReg
             RTS                     ; return to input to get more input
@@ -3372,19 +3381,19 @@ MoveM_R2M_L_M7
             JMP     InvalidOpcode  ; for mode 7 if register is not 0 or 1, moveM is invaid
 
 MoveM_R2M_L_xxxW
-			JSR PrintMoveM
-			JSR LengthL
+			JSR 	PrintMoveM
+			JSR 	LengthL
 			JSR     PrintSpace
-            ;print <list>
+            JSR		PrintList
 			MOVE.B	37(A6),(A1)+		 *,
 			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
 MoveM_R2M_L_xxxL
-			JSR PrintMoveM
-			JSR LengthL
+			JSR 	PrintMoveM
+			JSR 	LengthL
 			JSR     PrintSpace
-            ;print <list>
+            JSR		PrintList
 			MOVE.B	37(A6),(A1)+		 *,
 			JSR		PrintLong
             RTS                     ; return to input to get more input
@@ -3416,7 +3425,7 @@ MoveM_M2R_W_M2
             JSR		PrintIndirAddrReg
 
 			MOVE.B	37(A6),(A1)+		 *,
-            ;print <list>
+            JSR		PrintList
             RTS                     ; return to input to get more input
 
 MoveM_M2R_W_M4
@@ -3428,7 +3437,7 @@ MoveM_M2R_W_M4
 			JSR		PrintPreDeincAddrReg
 
 			MOVE.B	37(A6),(A1)+		 *,
-            ;print <list>
+            JSR		PrintList
             RTS                     ; return to input to get more input
 
 MoveM_M2R_W_M7
@@ -3450,7 +3459,7 @@ MoveM_M2R_W_xxxW
 			JSR		PrintByteOrWord
 
 			MOVE.B	37(A6),(A1)+		 *,
-            ;print <list>
+            JSR		PrintList
             RTS                     ; return to input to get more input
 
 MoveM_M2R_W_xxxL
@@ -3460,7 +3469,7 @@ MoveM_M2R_W_xxxL
 			JSR		PrintLong
 
 			MOVE.B	37(A6),(A1)+		 *,
-            ;print <list>
+            JSR		PrintList
             RTS                     ; return to input to get more input
 
 *************************************************                MoveM_M2R_L                *************************************************
@@ -3490,7 +3499,7 @@ MoveM_M2R_L_M2
             JSR		PrintIndirAddrReg
 
 			MOVE.B	37(A6),(A1)+		 *,
-            ;print <list>
+            JSR		PrintList
             RTS                     ; return to input to get more input
 
 MoveM_M2R_L_M4
@@ -3502,7 +3511,7 @@ MoveM_M2R_L_M4
 			JSR		PrintPreDeincAddrReg
 
 			MOVE.B	37(A6),(A1)+		 *,
-            ;print <list>
+            JSR		PrintList
             RTS                     ; return to input to get more input
 
 MoveM_M2R_L_M7
@@ -3524,7 +3533,7 @@ MoveM_M2R_L_xxxW
 			JSR		PrintByteOrWord
 
 			MOVE.B	37(A6),(A1)+		 *,
-            ;print <list>
+            JSR		PrintList
             RTS                     ; return to input to get more input
 
 MoveM_M2R_L_xxxL
@@ -3534,7 +3543,7 @@ MoveM_M2R_L_xxxL
 			JSR		PrintLong
 
 			MOVE.B	37(A6),(A1)+		 *,
-            ;print <list>
+            JSR		PrintList
             RTS                     ; return to input to get more input
 
 *************************************************                Muls_L                 *************************************************
