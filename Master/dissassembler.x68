@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 *-----------------------------------------------------------
 * Title      : Team 9 Disassembler
 * Written by : Mariana Huynh, Hanny Long, Alex Van Matre
@@ -182,7 +181,7 @@ ReadNextLoop
 * call decodingmachinecode
 
              ; call Alex's code for checking if full screen: TestWaited
-             JSR         TestWaited
+             JSR         PrintLine
              
              ; call Alex's code for displaying the address location: PrintAddr
              JSR         PrintAddr
@@ -4611,8 +4610,8 @@ Print
 
 PrintLine
     MOVE.B   #$00,(A1)               *Terminator for trap 13 - "hey! stop printing!"
-    ADD.B    #1,D6
-    MOVE.B   D6,D0
+    ADD.B    #1,PrintLines
+    MOVE.B   PrintLines,D0
     BRA      TestWaited
 
 TestWaited
@@ -4720,6 +4719,7 @@ NotFound
     MOVE.B   30(A6),(A1)+        *U
     MOVE.B   23(A6),(A1)+        *N
     MOVE.B   20(A6),(A1)+        *K
+    MOVE.B   23(A6),(A1)+        *N
     MOVE.B   24(A6),(A1)+        *O
     MOVE.B   32(A6),(A1)+        *W
     MOVE.B   23(A6),(A1)+        *N
@@ -4999,6 +4999,7 @@ WaitForMore     DC.B   'Max number of lines on screen. Press any key to continue
 Values          DC.B   '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','.',',','$','(',')','#','+','-',' '
 *                       0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40  41  42  43  44
 PrintPointer    DC.L   $3500
+PrintLines      DC.L   $4500
 
               END    START        ; last line of source
 
@@ -9732,6 +9733,7 @@ NotFound
     MOVE.B   30(A6),(A1)+        *U
     MOVE.B   23(A6),(A1)+        *N
     MOVE.B   20(A6),(A1)+        *K
+    MOVE.B   23(A6),(A1)+        *N
     MOVE.B   24(A6),(A1)+        *O
     MOVE.B   32(A6),(A1)+        *W
     MOVE.B   23(A6),(A1)+        *N
@@ -10015,7 +10017,9 @@ PrintPointer    DC.L   $3500
               END    START        ; last line of source
 
 *~Font name~Courier New~
+>>>>>>> 6594490cebbfe9aa85f2e7c755643e816fd416df
+
+*~Font name~Courier New~
 *~Font size~10~
 *~Tab type~1~
 *~Tab size~4~
->>>>>>> 6594490cebbfe9aa85f2e7c755643e816fd416df
