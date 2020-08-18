@@ -4852,7 +4852,15 @@ WaitMore
     TRAP     #15
     MOVE.B   #5,D0
     TRAP     #15
-    BRA      GoAheadAndPrint
+	CMP.B	 #13,D1
+    BEQ      GoAheadAndPrint
+	BRA		 NotEnter
+
+NotEnter
+	LEA 	PressEnter,A1
+	MOVE.B	#14,D0
+	TRAP	#15
+	BRA 	WaitMore
 
 GoAheadAndPrint
     MOVE.L   PrintPointer,A1
@@ -5221,7 +5229,8 @@ StrE                       DC.W 'E', 0
 StrF                       DC.W 'F', 0
 
 
-WaitForMore     DC.B   'Max number of lines on screen. Press any key to continue dissassembling', CR, LF, 0
+PressEnter      DC.B   CR,LF,'Input recieved was not ENTER', CR, LF, 0
+WaitForMore     DC.B   'Max number of lines on screen. Press ENTER to continue dissassembling', CR, LF, 0
 Values          DC.B   '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','.',',','$','(',')','#','+','-',' '
 *                       0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40  41  42  43  44
 PrintPointer    DC.L   $3500
