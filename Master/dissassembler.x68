@@ -51,10 +51,8 @@ GetEndAddr
              MOVE.B  #2,D0                       ; trap task 2: takes in input from keyboard and stores into A1
              TRAP    #15
 
-             ;MOVE.B  #1,D2                       ; If you need to go to invalidate, make sure its ending addr
              CMP     #8,D1                       ; Check if the given value was 8 characters long, if not it needs to be given again
              BNE     InvalidAddrHandler
-             ;MOVE.B  #0,D2                       ; Reset D2, if valid length
 
              BRA     AsciiToHex                  ; convert input to hex
 
@@ -134,7 +132,6 @@ LoadAddr
              MOVE.L      StartAddr,A2
              MOVE.L      EndAddr,A3
              JSR         ReadNextLoopStart
-             ;BRA quit
 
 * Invalid input handlers
 InvalidAddrHandler
@@ -171,247 +168,18 @@ ReadNextLoopStart
              MOVE.L      A2,A4
 
 ReadNextLoop
-             CMPA.L      A3,A4                   ; changed from A3,A2
+             CMPA.L      A3,A4                  
              BGE         AskExitOrRestart
-             ;BRA         AskExitOrRestart
 
-* load current address to A4 (at the start would be A2)
-* call decodingmachinecode
-*      that should rts back to your code
-* increment address by a word (A4)+
-* check if reached end address
-* call decodingmachinecode
              ;MOVE.B	     -(A4),A4
-             ; call Alex's code for checking if full screen: TestWaited
+
              JSR         PrintLine
 
-             ; call Alex's code for displaying the address location: PrintAddr
              JSR         PrintAddr
-
-             MOVE.W      (A4)+,D7                   ; read one word at a time and store in D7
+             
              JSR         DecodingMachineCode
+             MOVE.W      (A4)+,D7                   ; read one word at a time and store in D7
              JMP         ReadNextLoop
-
-*StartParse
-*             BSR         CheckIf20Lines
-*             JSR         DispAddr
-*             MOVE.W      (A2)+, D7               *Testing for MOVE
-*             JSR         ParseOpcode
-*             JMP         ReadNextLoop
-
-*CheckIf20Lines
-*             ADD         #1, D2				     ; D2 = counter for number of lines
-*             CMP         #20, D2
-*
-*             BGE         EnterToCont          	 ; if 20 lines in ouput console, display press enter
-*             LEA         EmptyChar, A1
-*             MOVE.B      #14, D0
-*             TRAP        #15
-*
-*             RTS
-
-*EnterToCont
-*             JSR         DispPressEnter          ; ask user to press enter to continue
-*             MOVE        #0, D2		             ; set D2 counter back to 0
-*             MOVE.B      #5, D0
-*             TRAP        #15
-*             RTS
-
-*DispPressEnter
-*             LEA         AskToCont,A1
-*             MOVE.B      #14, D0
-*             TRAP        #15
-*             RTS
-
-*DispAddr
-*             MOVE.L      A2, D5 				  ; store current address to D5
-*             MOVE.L      D5, Cur4bits             ; move current address value to memory
-*             JSR         HexToAscii			      ; display first four hexabits
-*             MOVE.W      A2, D5		        	  ; repeat, but word to get last four hexabits
-*             MOVE.W      D5, Cur4bits
-*             JSR         HexToAscii
-*             JSR         DispSpaceChar			  ; display space
-*             RTS
-
-*DispSpaceChar
-*             MOVEA.L     #0, A1
-*             LEA         SpaceChar, A1
-*             MOVE.B      #14, D0
-*             TRAP        #15
-*             RTS
-
-*HexToAscii
-*             LEA         HexJumpTable,A4           ; move subroutine to A4
-*
-*             MOVE.W      Cur4bits,D3
-*             JSR         ShiftToFirst4bitsD3
-*             MULU        #6,D3
-*             JSR         0(A4,D3)
-*
-*             MOVE.W      Cur4bits,D3
-*             JSR         ShiftToSecond4bitsD3
-*             MULU        #6,D3
-*             JSR         0(A4,D3)
-*
-*             MOVE.W      Cur4bits,D3
-*             JSR         ShiftToThird4bitsD3
-*             MULU        #6,D3
-*             JSR         0(A4,D3)
-*
-*             MOVE.W      Cur4bits,D3
-*             JSR         ShiftToFourth4bitsD3
-*             MULU        #6,D3
-*             JSR         0(A4,D3)
-*
-*             CLR.W       D3
-*             RTS
-
-*ShiftToFirst4bitsD3
-*             LSR         #8,D3      ; shift 8 bits to right
-*             LSR         #4,D3      ; shift 4 bits to right, now left most 4 bits is now right-most 4 bits
-*             RTS
-*
-*ShiftToSecond4bitsD3
-*             LSL         #4,D3      ; shift out left most 4 bits
-*             LSR         #4,D3      ; return the original place
-*             LSR         #8,D3      ; shift out two rightmost 4 bits
-*             RTS
-*
-*ShiftToThird4bitsD3
-*             LSL         #8,D3      ; shift out two left most 4 bits
-*             LSR         #8,D3      ; shift bits back to original position
-*             LSR         #4,D3      ; shift out rightmost 4 bits
-*             RTS
-*
-*ShiftToFourth4bitsD3
-*             LSL         #8,D3	    ; shift out two left most 4 bits
-*             LSL         #4,D3	    ; shift out third left most 4 bits
-*             LSR         #8,D3	    ; return to original position
-*             LSR         #4,D3
-*             RTS
-*
-*HexJumpTable
-*             JMP         Disp0
-*             JMP         Disp1
-*             JMP         Disp2
-*             JMP         Disp3
-*             JMP         Disp4
-*             JMP         Disp5
-*             JMP         Disp6
-*             JMP         Disp7
-*             JMP         Disp8
-*             JMP         Disp9
-*
-*             JMP         DispA
-*             JMP         DispB
-*             JMP         DispC
-*             JMP         DispD
-*             JMP         DispE
-*             JMP         DispF
-*
-** Display Hex Numbers
-*Disp0
-*             LEA         STR0,A1
-*             MOVE.B      #14,D0
-*             TRAP        #15
-*             RTS
-*
-*Disp1
-*             LEA         STR1,A1
-*             MOVE.B      #14,D0
-*             TRAP        #15
-*             RTS
-*
-*Disp2
-*             LEA         STR2,A1
-*             MOVE.B      #14,D0
-*             TRAP        #15
-*             RTS
-*
-*Disp3
-*             LEA         STR3,A1
-*             MOVE.B      #14,D0
-*             TRAP        #15
-*             RTS
-*
-*Disp4
-*             LEA         STR4,A1
-*             MOVE.B      #14,D0
-*             TRAP        #15
-*             RTS
-*
-*Disp5
-*             LEA         STR5,A1
-*             MOVE.B      #14,D0
-*             TRAP        #15
-*             RTS
-*
-*Disp6
-*             LEA         STR6,A1
-*             MOVE.B      #14,D0
-*             TRAP        #15
-*             RTS
-*
-*Disp7
-*             LEA         STR7,A1
-*             MOVE.B      #14,D0
-*             TRAP        #15
-*             RTS
-*
-*Disp8
-*             LEA         Str8,A1
-*             MOVE.B      #14,D0
-*             TRAP        #15
-*             RTS
-*
-*Disp9
-*             LEA         Str9,A1
-*             MOVE.B      #14,D0
-*             TRAP        #15
-*             RTS
-*
-** Display Hex Letters
-*DispA
-*             LEA         STRA,A1
-*             MOVE.B      #14,D0
-*             TRAP        #15
-*             RTS
-*
-*DispB
-*             LEA         STRB,A1
-*             MOVE.B      #14,D0
-*             TRAP        #15
-*             RTS
-*
-*DispC
-*             LEA         STRC,A1
-*             MOVE.B      #14,D0
-*             TRAP        #15
-*             RTS
-*
-*DispD
-*             LEA         STRD,A1
-*             MOVE.B      #14,D0
-*             TRAP        #15
-*             RTS
-*
-*DispE
-*             LEA         STRE,A1
-*             MOVE.B      #14,D0
-*             TRAP        #15
-*             RTS
-*
-*DispF
-*             LEA         STRF,A1
-*             MOVE.B      #14,D0
-*             TRAP        #15
-*             RTS
-
-
-
-** Parse opcode
-*ParseOpcode  ; insert hanny's code here
-
 
 AskExitOrRestart
              LEA         AskRestartOrExitMsg,A1 ; ask user to restart or exit program
@@ -5228,6 +4996,8 @@ PrintPointer    DC.L   $3500
 PrintLines      DC.L   $4500
 
               END    START        ; last line of source
+
+
 
 *~Font name~Courier New~
 *~Font size~10~
