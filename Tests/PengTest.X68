@@ -155,7 +155,7 @@ NOP
     MULS.W    (A0)+,D1
     DIVU.W    D0,D1
     DIVU.W    (A0),D1
-    DIVU.W    -(A0),D1
+    ;DIVU.W    -(A0),D1
     DIVU.W    (A0)+,D1
     AND.B     D1,D2
     AND.B     D1,(A1)
@@ -268,6 +268,7 @@ label4
 * Put variables and constants here
 
     END    START        ; last line of source
+
 
 
 

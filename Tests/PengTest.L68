@@ -1,0 +1,288 @@
+00009000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 8/18/2020 8:35:30 PM
+
+00000000                             1  *****************************
+00000000                             2  *
+00000000                             3  * demo_test.X68
+00000000                             4  *
+00000000                             5  * Created 12/05/2018
+00000000                             6  *
+00000000                             7  * Test program for CSS 422 Disassembler Project Demo
+00000000                             8  *
+00000000                             9  *****************************
+00000000                            10  
+00000000  =00009000                 11  start           EQU     $00009000       * ORG and END address
+00000000                            12  
+00000000                            13  * ORG the program so that it straddles the address boundary $00007FFF to $00008000
+00000000                            14  
+00009000                            15                  ORG     start
+00009000                            16  
+00009000                            17  NOP
+00009000  4E75                      18      RTS
+00009002  4E71                      19      NOP
+00009004  4E75                      20      RTS
+00009006  41D0                      21      LEA     (A0),A0
+00009008  41D5                      22      LEA     (A5),A0
+0000900A  41D7                      23      LEA     (A7),A0
+0000900C  4FD0                      24      LEA     (A0),A7
+0000900E  4FD5                      25      LEA     (A5),A7
+00009010  4FD7                      26      LEA     (A7),A7
+00009012  1200                      27      MOVE.B    D0,D1
+00009014  1080                      28      MOVE.B    D0,(A0)
+00009016  10C0                      29      MOVE.B    D0,(A0)+
+00009018  1100                      30      MOVE.B    D0,-(A0)
+0000901A  1010                      31      MOVE.B    (A0),D0
+0000901C  1290                      32      MOVE.B    (A0),(A1)
+0000901E  12D0                      33      MOVE.B    (A0),(A1)+
+00009020  1310                      34      MOVE.B    (A0),-(A1)
+00009022  1018                      35      MOVE.B    (A0)+,D0
+00009024  1298                      36      MOVE.B    (A0)+,(A1)
+00009026  12D8                      37      MOVE.B    (A0)+,(A1)+
+00009028  1318                      38      MOVE.B    (A0)+,-(A1)
+0000902A  1020                      39      MOVE.B    -(A0),D0
+0000902C  12A0                      40      MOVE.B    -(A0),(A1)
+0000902E  12E0                      41      MOVE.B    -(A0),(A1)+
+00009030  1320                      42      MOVE.B    -(A0),-(A1)
+00009032  3200                      43      MOVE.W    D0,D1
+00009034  3080                      44      MOVE.W    D0,(A0)
+00009036  30C0                      45      MOVE.W    D0,(A0)+
+00009038  3100                      46      MOVE.W    D0,-(A0)
+0000903A  3008                      47      MOVE.W    A0,D0
+0000903C  3288                      48      MOVE.W    A0,(A1)
+0000903E  32C8                      49      MOVE.W    A0,(A1)+
+00009040  3308                      50      MOVE.W    A0,-(A1)
+00009042  3010                      51      MOVE.W    (A0),D0
+00009044  3290                      52      MOVE.W    (A0),(A1)
+00009046  32D0                      53      MOVE.W    (A0),(A1)+
+00009048  3310                      54      MOVE.W    (A0),-(A1)
+0000904A  3018                      55      MOVE.W    (A0)+,D0
+0000904C  3298                      56      MOVE.W    (A0)+,(A1)
+0000904E  32D8                      57      MOVE.W    (A0)+,(A1)+
+00009050  3318                      58      MOVE.W    (A0)+,-(A1)
+00009052  3020                      59      MOVE.W    -(A0),D0
+00009054  32A0                      60      MOVE.W    -(A0),(A1)
+00009056  32E0                      61      MOVE.W    -(A0),(A1)+
+00009058  3320                      62      MOVE.W    -(A0),-(A1)
+0000905A  2200                      63      MOVE.L    D0,D1
+0000905C  2080                      64      MOVE.L    D0,(A0)
+0000905E  20C0                      65      MOVE.L    D0,(A0)+
+00009060  2100                      66      MOVE.L    D0,-(A0)
+00009062  2008                      67      MOVE.L    A0,D0
+00009064  2288                      68      MOVE.L    A0,(A1)
+00009066  22C8                      69      MOVE.L    A0,(A1)+
+00009068  2308                      70      MOVE.L    A0,-(A1)
+0000906A  2010                      71      MOVE.L    (A0),D0
+0000906C  2290                      72      MOVE.L    (A0),(A1)
+0000906E  22D0                      73      MOVE.L    (A0),(A1)+
+00009070  2310                      74      MOVE.L    (A0),-(A1)
+00009072  2018                      75      MOVE.L    (A0)+,D0
+00009074  2298                      76      MOVE.L    (A0)+,(A1)
+00009076  22D8                      77      MOVE.L    (A0)+,(A1)+
+00009078  2318                      78      MOVE.L    (A0)+,-(A1)
+0000907A  2020                      79      MOVE.L    -(A0),D0
+0000907C  22A0                      80      MOVE.L    -(A0),(A1)
+0000907E  22E0                      81      MOVE.L    -(A0),(A1)+
+00009080  2320                      82      MOVE.L    -(A0),-(A1)
+00009082  48A1 007F                 83      MOVEM.W   A1-A7,-(A1)
+00009086  48E1 7F00                 84      MOVEM.L   D1-D7,-(A1)
+0000908A  48A1 0140                 85      MOVEM.W   A1/D7,-(A1)
+0000908E  48E1 0140                 86      MOVEM.L   A1/D7,-(A1)
+00009092  4891 FE00                 87      MOVEM.W   A1-A7,(A1)
+00009096  48D1 00FE                 88      MOVEM.L   D1-D7,(A1)
+0000909A  4891 0280                 89      MOVEM.W   A1/D7,(A1)
+0000909E  48D1 0280                 90      MOVEM.L   A1/D7,(A1)
+000090A2  4C99 FE00                 91      MOVEM.W   (A1)+,A1-A7
+000090A6  4CD9 00FE                 92      MOVEM.L   (A1)+,D1-D7
+000090AA  4C99 0280                 93      MOVEM.W   (A1)+,A1/D7
+000090AE  4CD9 0280                 94      MOVEM.L   (A1)+,A1/D7
+000090B2  4C91 FE00                 95      MOVEM.W   (A1),A1-A7
+000090B6  4CD1 00FE                 96      MOVEM.L   (A1),D1-D7
+000090BA  4C91 0280                 97      MOVEM.W   (A1),A1/D7
+000090BE  4CD1 0280                 98      MOVEM.L   (A1),A1/D7
+000090C2  2040                      99      MOVEA.L    D0,A0
+000090C4  2048                     100      MOVEA.L    A0,A0
+000090C6  2050                     101      MOVEA.L    (A0),A0
+000090C8  2058                     102      MOVEA.L    (A0)+,A0
+000090CA  2060                     103      MOVEA.L    -(A0),A0  
+000090CC  D401                     104      ADD.B     D1,D2
+000090CE  D311                     105      ADD.B     D1,(A1)
+000090D0  D319                     106      ADD.B     D1,(A1)+
+000090D2  D321                     107      ADD.B     D1,-(A1)
+000090D4  D211                     108      ADD.B     (A1),D1
+000090D6  D219                     109      ADD.B     (A1)+,D1
+000090D8  D221                     110      ADD.B     -(A1),D1
+000090DA  D441                     111      ADD.W     D1,D2
+000090DC  D351                     112      ADD.W     D1,(A1)
+000090DE  D359                     113      ADD.W     D1,(A1)+
+000090E0  D361                     114      ADD.W     D1,-(A1)
+000090E2  D251                     115      ADD.W     (A1),D1
+000090E4  D259                     116      ADD.W     (A1)+,D1
+000090E6  D261                     117      ADD.W     -(A1),D1
+000090E8  D481                     118      ADD.L     D1,D2
+000090EA  D391                     119      ADD.L     D1,(A1)
+000090EC  D399                     120      ADD.L     D1,(A1)+
+000090EE  D3A1                     121      ADD.L     D1,-(A1)
+000090F0  D291                     122      ADD.L     (A1),D1
+000090F2  D299                     123      ADD.L     (A1)+,D1
+000090F4  D2A1                     124      ADD.L     -(A1),D1
+000090F6  D5D9                     125      ADDA.L        (A1)+,A2
+000090F8  D5E1                     126      ADDA.L        -(A1),A2
+000090FA  9401                     127      SUB.B     D1,D2
+000090FC  9311                     128      SUB.B     D1,(A1)
+000090FE  9319                     129      SUB.B     D1,(A1)+
+00009100  9321                     130      SUB.B     D1,-(A1)
+00009102  9211                     131      SUB.B     (A1),D1
+00009104  9219                     132      SUB.B     (A1)+,D1
+00009106  9221                     133      SUB.B     -(A1),D1
+00009108  9441                     134      SUB.W     D1,D2
+0000910A  92C1                     135      SUB.W     D1,A1
+0000910C  9351                     136      SUB.W     D1,(A1)
+0000910E  9359                     137      SUB.W     D1,(A1)+
+00009110  9361                     138      SUB.W     D1,-(A1)
+00009112  9249                     139      SUB.W     A1,D1
+00009114  9251                     140      SUB.W     (A1),D1
+00009116  9259                     141      SUB.W     (A1)+,D1
+00009118  9261                     142      SUB.W     -(A1),D1
+0000911A  9481                     143      SUB.L     D1,D2
+0000911C  93C1                     144      SUB.L     D1,A1
+0000911E  9391                     145      SUB.L     D1,(A1)
+00009120  9399                     146      SUB.L     D1,(A1)+
+00009122  93A1                     147      SUB.L     D1,-(A1)
+00009124  9289                     148      SUB.L     A1,D1
+00009126  9291                     149      SUB.L     (A1),D1
+00009128  9299                     150      SUB.L     (A1)+,D1
+0000912A  92A1                     151      SUB.L     -(A1),D1    
+0000912C  C3C0                     152      MULS.W    D0,D1
+0000912E  C3D0                     153      MULS.W    (A0),D1
+00009130  C3E0                     154      MULS.W    -(A0),D1
+00009132  C3D8                     155      MULS.W    (A0)+,D1
+00009134  82C0                     156      DIVU.W    D0,D1
+00009136  82D0                     157      DIVU.W    (A0),D1
+00009138                           158      ;DIVU.W    -(A0),D1
+00009138  82D8                     159      DIVU.W    (A0)+,D1
+0000913A  C401                     160      AND.B     D1,D2
+0000913C  C311                     161      AND.B     D1,(A1)
+0000913E  C319                     162      AND.B     D1,(A1)+
+00009140  C321                     163      AND.B     D1,-(A1)
+00009142  C211                     164      AND.B     (A1),D1
+00009144  C219                     165      AND.B     (A1)+,D1
+00009146  C221                     166      AND.B     -(A1),D1
+00009148  C441                     167      AND.W     D1,D2
+0000914A  C351                     168      AND.W     D1,(A1)
+0000914C  C359                     169      AND.W     D1,(A1)+
+0000914E  C361                     170      AND.W     D1,-(A1)
+00009150  C251                     171      AND.W     (A1),D1
+00009152  C259                     172      AND.W     (A1)+,D1
+00009154  C261                     173      AND.W     -(A1),D1
+00009156  C481                     174      AND.L     D1,D2
+00009158  C391                     175      AND.L     D1,(A1)
+0000915A  C399                     176      AND.L     D1,(A1)+
+0000915C  C3A1                     177      AND.L     D1,-(A1)
+0000915E  C291                     178      AND.L     (A1),D1
+00009160  C299                     179      AND.L     (A1)+,D1
+00009162  C2A1                     180      AND.L     -(A1),D1  
+00009164  6E30                     181      BGT.B     label1
+00009166  6E40                     182      BGT.B     label2
+00009168  6F2C                     183      BLE.B     label1
+0000916A  6F3C                     184      BLE.B     label2
+0000916C  6C28                     185      BGE.B     label1
+0000916E  6738                     186      BEQ.B     label2
+00009170  6700 0024                187      BEQ.W     label1
+00009174  4E90                     188      JSR       (A0)
+00009176  4EB8 1234                189      JSR       $1234
+0000917A  4EB9 12345678            190      JSR       $12345678
+00009180  4EB9 00009196            191      JSR       label1
+00009186  4EB9 000091A8            192      JSR       label2
+0000918C  4EB9 000091C0            193      JSR       label3
+00009192  4E71                     194      NOP
+00009194  4E75                     195      RTS
+00009196                           196  label1
+00009196  4E71                     197      NOP
+00009198  4E75                     198      RTS
+0000919A  41F8 0012                199      LEA       $12,A0
+0000919E  41F8 1234                200      LEA       $1234,A0
+000091A2  41F9 12345678            201      LEA       $12345678,A0
+000091A8                           202  label2
+000091A8  E32A                     203      LSL.B     D1,D2
+000091AA  E36A                     204      LSL.W     D1,D2
+000091AC  E3D1                     205      LSL.W     (A1)
+000091AE  E3D9                     206      LSL.W     (A1)+
+000091B0  E3E1                     207      LSL.W     -(A1)
+000091B2  E3AA                     208      LSL.L     D1,D2
+000091B4  E322                     209      ASL.B     D1,D2
+000091B6  E362                     210      ASL.W     D1,D2
+000091B8  E1D1                     211      ASL.W     (A1)
+000091BA  E1D9                     212      ASL.W     (A1)+
+000091BC  E1E1                     213      ASL.W     -(A1)
+000091BE  E3A2                     214      ASL.L     D1,D2
+000091C0                           215  label3
+000091C0  48B8 FE00 0012           216      MOVEM.W   A1-A7,$12
+000091C6  48F8 00FE 0012           217      MOVEM.L   D1-D7,$12
+000091CC  48B8 0280 0012           218      MOVEM.W   A1/D7,$12
+000091D2  48F8 0280 0012           219      MOVEM.L   A1/D7,$12
+000091D8  48B8 FE00 1234           220      MOVEM.W   A1-A7,$1234
+000091DE  48F8 00FE 1234           221      MOVEM.L   D1-D7,$1234
+000091E4  48B8 0280 1234           222      MOVEM.W   A1/D7,$1234
+000091EA  48F8 0280 1234           223      MOVEM.L   A1/D7,$1234
+000091F0  48B9 FE00 12345678       224      MOVEM.W   A1-A7,$12345678
+000091F8  48F9 00FE 12345678       225      MOVEM.L   D1-D7,$12345678
+00009200  48B9 0280 12345678       226      MOVEM.W   A1/D7,$12345678
+00009208  48F9 0280 12345678       227      MOVEM.L   A1/D7,$12345678
+00009210  4CB8 FE00 0012           228      MOVEM.W   $12,A1-A7
+00009216  4CF8 00FE 0012           229      MOVEM.L   $12,D1-D7
+0000921C  4CB8 0280 0012           230      MOVEM.W   $12,A1/D7
+00009222  4CF8 0280 0012           231      MOVEM.L   $12,A1/D7
+00009228  4CB8 FE00 1234           232      MOVEM.W   $1234,A1-A7
+0000922E  4CF8 00FE 1234           233      MOVEM.L   $1234,D1-D7
+00009234  4CB8 0280 1234           234      MOVEM.W   $1234,A1/D7
+0000923A  4CF8 0280 1234           235      MOVEM.L   $1234,A1/D7
+00009240  4CB9 FE00 12345678       236      MOVEM.W   $12345678,A1-A7
+00009248  4CF9 00FE 12345678       237      MOVEM.L   $12345678,D1-D7
+00009250  4CB9 0280 12345678       238      MOVEM.W   $12345678,A1/D7
+00009258  4CF9 0280 12345678       239      MOVEM.L   $12345678,A1/D7
+00009260  C3F8 0012                240      MULS.W    $12,D1
+00009264  C3F8 1234                241      MULS.W    $1234,D1
+00009268  C3F9 12345678            242      MULS.W    $12345678,D1
+0000926E  C3FC 1234                243      MULS.W    #$1234,D1
+00009272  82F8 0012                244      DIVU.W    $12,D1
+00009276  82F8 1234                245      DIVU.W    $1234,D1
+0000927A  82F9 12345678            246      DIVU.W    $12345678,D1
+00009280  82FC 1234                247      DIVU.W    #$1234,D1
+00009284                           248  label4
+00009284  6EFE                     249      BGT.B     label4
+00009286  6EFC                     250      BGT.B     label4
+00009288  6EFA                     251      BGT.B     label4
+0000928A  6F00 FF0A                252      BLE.W     label1
+0000928E  6F00 FF18                253      BLE.W     label2
+00009292  6F00 FF2C                254      BLE.W     label3
+00009296  6700 FEFE                255      BEQ.W     label1
+0000929A  6700 FF0C                256      BEQ.W     label2
+0000929E  6700 FF20                257      BEQ.W     label3
+000092A2  6000 FF04                258      BRA       label2
+000092A6  6000 FF18                259      BRA       label3
+000092AA  4EB9 00009196            260      JSR       label1
+000092B0  4EB9 000091A8            261      JSR       label2
+000092B6  4EB9 000091C0            262      JSR       label3
+000092BC                           263  
+000092BC                           264  * Put program code here
+000092BC                           265  
+000092BC  FFFF FFFF                266      SIMHALT             ; halt simulator
+000092C0                           267  
+000092C0                           268  * Put variables and constants here
+000092C0                           269  
+000092C0                           270      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+LABEL1              9196
+LABEL2              91A8
+LABEL3              91C0
+LABEL4              9284
+NOP                 9000
+START               9000

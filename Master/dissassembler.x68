@@ -179,7 +179,7 @@ ReadNextLoop
              JSR         PrintAddr
 
              JSR         DecodingMachineCode
-             MOVE.W      (A4)+,D7                   ; read one word at a time and store in D7
+             ;MOVE.W      (A4)+,D7                   ; read one word at a time and store in D7
              JMP         ReadNextLoop
 
 AskExitOrRestart
@@ -245,18 +245,17 @@ quit
 ;If nothing work BUG is in GetNextD4bit subroutine or InvalidOpcode subroutine, both is at the bottom of the file
 
 DecodingMachineCode
-			MOVE.L  (A4),CurDecode
+            CLR     D2
+			MOVE.W  (A4)+,D2        ; create copy of data in A4 to fix restart
 
-            CMPI.W  #20081,(A4)    ; NOP if equal
+            CMPI.W  #20081,D2    ; NOP if equal
             BEQ     PrintNOP       ; Call Output PrintNOP subroutine
             ;RTS                    ; Return to get more input
 
-            CMPI.W  #20085,(A4)    ; RTS if equal
+            CMPI.W  #20085,D2    ; RTS if equal
             BEQ     PrintRTS       ; Call Output PrintRTS subroutine
             ;RTS                    ; Return to get more input
 
-            CLR     D2
-            MOVE.W  (A4),D2        ; create copy of data in A4 to fix restart
             MOVE.L  #4,D4          ; get the next 4 bit from (A4) in to D5
             JSR     GetNextD4bit   ; D5 hold the first 4 bit of (A4)
 
@@ -3137,13 +3136,13 @@ Bcc_displacement    ;for gettin the next 8 bit for displacement and outputting i
 
 Bcc_16bit_Disp
             ; print 16bit address
-			MOVE.L   (A4)+,A4
+			MOVE.B   44(A6),(A1)+        *(space)
 		    MOVE.B   38(A6),(A1)+        *$
             RTS                     ; return to input to get more input
 
 Bcc_32bit_Disp
             ; print 32bit address
-			MOVE.L   (A4)+,A4
+			MOVE.B   44(A6),(A1)+        *(space)
 		    MOVE.B   38(A6),(A1)+        *$
             RTS                     ; return to input to get more input
 
@@ -4611,7 +4610,6 @@ Print
     RTS
 
 PrintLine
-
     MOVE.B   #$00,(A1)               *Terminator for trap 13 - "hey! stop printing!"
     ADD.B    #1,PrintLines
     MOVE.B   PrintLines,D0

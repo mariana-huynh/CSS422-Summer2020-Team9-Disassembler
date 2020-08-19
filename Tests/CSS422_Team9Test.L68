@@ -1,0 +1,200 @@
+00009000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 8/18/2020 5:35:39 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      : Team9 Testing 
+00000000                             3  * Written by : Mariana Huynh
+00000000                             4  * Date       : August 10th, 2020
+00000000                             5  * Description: Tests
+00000000                             6  *-----------------------------------------------------------
+00009000                             7      ORG    $9000
+00009000                             8  START:                  ; first instruction of program
+00009000                             9  
+00009000                            10  * Put program code here
+00009000                            11  
+00009000                            12  * test NOP three times 
+00009000  4E71                      13          NOP
+00009002  4E71                      14          NOP
+00009004  4E71                      15          NOP
+00009006                            16      
+00009006                            17  * test MOVE
+00009006                            18  * test sizes
+00009006  1401                      19          MOVE.B  D1,D2           ; byte
+00009008  3803                      20          MOVE.W  D3,D4           ; word
+0000900A  2C05                      21          MOVE.L  D5,D6           ; long 
+0000900C                            22      
+0000900C                            23  * test destination not Dn, keep size and source same 
+0000900C  1081                      24          MOVE.B  D1,(A0)         ;(An)
+0000900E  10C1                      25          MOVE.B  D1,(A0)+        ;(An)+
+00009010  1101                      26          MOVE.B  D1,-(A0)        ; -(An)
+00009012  11C1 12AB                 27          MOVE.B  D1,$12AB        ;(xxx).W
+00009016  11C1 5000                 28          MOVE.B  D1,$00005000    ;(xxx).L
+0000901A                            29  
+0000901A                            30  * test source
+0000901A  3209                      31          MOVE.W  A1,D1           ; An
+0000901C  1211                      32          MOVE.B  (A1),D1         ;(An)
+0000901E  1219                      33          MOVE.B  (A1)+,D1        ;(An)+
+00009020  1221                      34          MOVE.B  -(A1),D1        ; -(An)
+00009022  3238 12AB                 35          MOVE.W  $12AB,D1        ; (xxx).W
+00009026  2238 5000                 36          MOVE.L  $00005000,D1    ; (xxx).L
+0000902A  123C 001A                 37          MOVE.B  #$1A,D1         ; #<data>
+0000902E                            38          
+0000902E                            39  * other     
+0000902E  303C 9013                 40          MOVE.W  #$9013,D0       ; W vs L    
+00009032  203C 00009013             41          MOVE.L  #$9013,D0       
+00009038  1638 3213                 42          MOVE.B  $00003213,D3    ; source too big   
+0000903C  1639 0000AB40             43          MOVE.B  $AB40,D3       
+00009042  1639 FFFF1234             44          MOVE.B  $FFFF1234,D3    
+00009048  1639 FFFF5678             45          MOVE.B  $FFFF5678,D3   
+0000904E  3639 0000AB40             46          MOVE.W  $AB40,D3        
+Line 47 ERROR: Invalid size code
+00009054  3679 0000A000             47          MOVE.B  $A000,A3        ; dest An
+0000905A                            48  
+0000905A                            49  * test MOVEM **
+0000905A                            50  * various EA modes
+0000905A  48A7 FF00                 51          MOVEM       D0-D7,-(A7)                     
+0000905E  4C9F 00FF                 52          MOVEM       (A7)+,D0-D7                     
+00009062                            53  
+00009062  48A7 00FE                 54          MOVEM       A0-A6,-(A7)                     
+00009066  4C9F 7F00                 55          MOVEM       (A7)+,A0-A6                     
+0000906A                            56    
+0000906A  48A7 FFFE                 57          MOVEM       A0-A6/D0-D7,-(A7)              
+0000906E  4C9F 7FFF                 58          MOVEM       (A7)+,A0-A6/D0-D7              
+00009072                            59   
+00009072  48B8 7FFF 2468            60          MOVEM       D0-D7/A0-A6,$2468               
+00009078  48B8 7FFF 2468            61          MOVEM       D0-D7/A0-A6,$2468               
+0000907E                            62  
+0000907E                            63  * test sizes        
+0000907E  4C99 00FF                 64          MOVEM       (A1)+,D0-D7                     
+00009082  4C99 00FF                 65          MOVEM.W     (A1)+,D0-D7                    
+00009086  4CD9 00FF                 66          MOVEM.L     (A1)+,D0-D7                     
+0000908A  48F8 7FFF 1234            67          MOVEM.L     D0-D7/A0-A6,$1234               
+00009090                            68  
+00009090  4CD5 4FE7                 69          MOVEM.L     (A5),D0-D2/D5-D7/A0-A3/A6     
+00009094  48A7 FDFE                 70          MOVEM.W     D0-D5/D7/A0-A6,-(A7)         
+00009098  4C9F 7FBF                 71          MOVEM.W     (A7)+,D0-D5/D7/A0-A6           
+0000909C                            72  
+0000909C  48F6 07E0 483A            73          MOVEM.L     A0/A1/A2/D5/D6/D7,$3A(A6,D4.L) 
+000090A2  4CD8 1B07                 74          MOVEM.L     (A0)+,D0/D1/D2/A4/A3/A0/A1      
+000090A6                            75   
+000090A6                            76  * not required
+Line 77 ERROR: Invalid addressing mode
+000090A6                            77          MOVEA.W $1234,D0        ; not required opcode, also invalid 
+Line 78 ERROR: Invalid addressing mode
+000090A6                            78          ANDI.B  #23,#$100       ; not required opcode, also invalid 
+000090A6                            79  
+000090A6                            80  * test add
+000090A6                            81  * test sizes 
+000090A6  D401                      82          ADD.B  D1,D2           ; byte
+000090A8  D843                      83          ADD.W  D3,D4           ; word
+000090AA  DC85                      84          ADD.L  D5,D6           ; long      
+000090AC                            85  
+000090AC                            86  * test destination not Dn, keep size and source same 
+000090AC  D310                      87          ADD.B  D1,(A0)         ;(An)
+000090AE  D318                      88          ADD.B  D1,(A0)+        ;(An)+
+000090B0  D320                      89          ADD.B  D1,-(A0)        ; -(An)
+000090B2  D338 12AB                 90          ADD.B  D1,$12AB        ;(xxx).W
+000090B6  D338 5000                 91          ADD.B  D1,$00005000    ;(xxx).L
+000090BA                            92  
+000090BA                            93  * test source
+000090BA  D249                      94          ADD.W  A1,D1           ; An
+000090BC  D211                      95          ADD.B  (A1),D1         ;(An)
+000090BE  D219                      96          ADD.B  (A1)+,D1        ;(An)+
+000090C0  D221                      97          ADD.B  -(A1),D1        ; -(An)
+000090C2  D278 12AB                 98          ADD.W  $12AB,D1        ; (xxx).W
+000090C6  D2B8 5000                 99          ADD.L  $00005000,D1    ; (xxx).L
+000090CA  0601 001A                100          ADD.B  #$1A,D1         ; #<data>
+000090CE                           101          
+000090CE                           102  * other     
+000090CE  0640 9013                103          ADD.W  #$9013,D0       ; W vs L    
+000090D2  0680 00009013            104          ADD.L  #$9013,D0       
+000090D8  D638 3213                105          ADD.B  $00003213,D3    ; source too big   
+000090DC  D639 0000AB40            106          ADD.B  $AB40,D3       
+000090E2  D639 FFFF1234            107          ADD.B  $FFFF1234,D3    
+000090E8  D639 FFFF5678            108          ADD.B  $FFFF5678,D3   
+000090EE  D679 0000AB40            109          ADD.W  $AB40,D3        
+Line 110 ERROR: Invalid size code
+000090F4  D6F9 0000A000            110          ADD.B  $A000,A3         ; dest An  
+Line 111 ERROR: Immediate data exceeds 8 bits
+000090FA  0602 0000                111          ADD.B   #$1000,D2       ; exceed 8 bits, need 16 bits
+000090FE                           112          
+000090FE                           113  * test shifts **
+000090FE  E128                     114          LSL.B   D0,D0
+00009100  E948                     115          LSL.W   #4,D0
+00009102  E3DA                     116          LSL.W   (A2)+
+00009104  EC27                     117          ASR.B   D6,D7
+00009106  E3F8 1234                118          LSL     $00001234
+0000910A  E3F9 FFFF1123            119          LSL     $FFFF1123
+00009110  E2D9                     120          LSR     (A1)+
+00009112  E2E2                     121          LSR     -(A2)    
+00009114  E32A                     122          LSL.B   D1,D2
+00009116  E36A                     123          LSL.W   D1,D2
+00009118  E7AC                     124          LSL.L   D3,D4
+0000911A  E10D                     125          LSL.B   #8,D5
+0000911C  E94E                     126          LSL.W   #4,D6
+0000911E  E389                     127          LSL.L   #1,D1
+00009120                           128          
+00009120                           129  * test LEA ** 
+00009120  45F9 DC00FF00            130          LEA     $DC00FF00,A2
+00009126  49D5                     131          LEA     (A5),A4
+00009128  45F2 70E0                132          LEA     -$20(A2,D7),A2
+0000912C                           133          
+0000912C                           134  * test MULS and DIVU **
+0000912C  C7C0                     135          MULS    D0,D3       
+0000912E  C1D6                     136          MULS    (A6),D0     
+00009130  C3FC 4567                137          MULS    #$4567,D1   
+00009134  C3FC 002D                138          MULS    #45,D1
+00009138  CFF8 1234                139          MULS    $00001234,D7
+0000913C  C5F9 FFFF1000            140          MULS    $FFFF1000, D2 
+00009142                           141          
+00009142  8ADB                     142          DIVU    (A3)+,D5
+00009144  82FC 002D                143          DIVU    #45,D1
+00009148  8EF8 1234                144          DIVU    $00001234,D7
+0000914C  84F9 FFFF1000            145          DIVU    $FFFF1000, D2 
+00009152                           146  
+00009152                           147  * test SUB **
+00009152  0484 00000055            148          SUB.L   #$00000055,D4
+00009158  0487 FFFFFFEE            149          SUB.L   #$FFFFFFEE,D7
+0000915E  9805                     150          SUB.B   D5,D4
+00009160  9845                     151          SUB.W   D5,D4
+00009162  9885                     152          SUB.L   D5,D4
+00009164  93B8 1234                153          SUB.L   D1,$00001234
+00009168  92B8 1234                154          SUB.L   $00001234,D1
+0000916C  93B9 FFFF1234            155          SUB.L   D1, $FFFF1234
+00009172  92B9 FFFF1234            156          SUB.L   $FFFF1234,D1
+00009178  9650                     157          SUB     (A0),D3
+0000917A  9351                     158          SUB     D1, (A1)
+0000917C  9661                     159          SUB     -(A1),D3
+0000917E  9973 5000                160          SUB     D4, 0(A3,D5)  
+00009182  9973 5000                161          SUB     D4, 0(A3,D5)
+00009186                           162          
+00009186                           163  * test branches **
+00009186  6E00 FEA0                164          BGT.W     $00009028
+0000918A  6E00 008C                165          BGT.W     $00009218
+0000918E  6E00 0098                166          BGT.W     $00009228
+00009192  6F00 FE94                167          BLE.W     $00009028
+00009196  6F00 0080                168          BLE.W     $00009218
+0000919A  6F00 008C                169          BLE.W     $00009228
+0000919E                           170          
+0000919E                           171  * test JSR ** 
+0000919E  4EB9 00009028            172          JSR       $00009028
+000091A4  4EB9 00009218            173          JSR       $00009218
+000091AA  4EB9 00009228            174          JSR       $00009228
+000091B0                           175      
+000091B0                           176          
+000091B0                           177  
+000091B0  FFFF FFFF                178      SIMHALT             ; halt simulator
+000091B4                           179  
+000091B4                           180  * Put variables and constants here
+000091B4                           181  
+000091B4                           182      END    START        ; last line of source
+
+5 errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+START               9000
