@@ -4727,7 +4727,25 @@ NotFound
     MOVE.B   10(A6),(A1)+        *A
 	JSR      PrintTab
     MOVE.B   38(A6),(A1)+        *$
-    RTS
+	MOVE.B	 -(A4),CurDecode
+	MOVE.B	 #16,D0
+	BRA		 PrintBits
+
+PrintBits
+	CMP.B	#0,D0
+	BEQ		PBDone
+	MOVE.L  #1,D4 				 ;Get 1 bit from A4
+	JSR		GetNextD4bit		 ;Store in D5
+
+	MOVE.B	(A6,D5),(A1)+		 ;Put into print queue
+
+	SUB.B	#1,D0				 ;Sub 1, do 8 times?
+
+	BRA		PrintBits
+
+PBDone
+	MOVE.B	(A4)+,D0
+	RTS
 
 PrintDataReg
     MOVE.B   13(A6),(A1)+        *D
