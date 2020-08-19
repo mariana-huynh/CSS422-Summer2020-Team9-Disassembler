@@ -11,6 +11,7 @@ START:                                           ; first instruction of program
     JSR      Print
     MOVE.L   PrintPointer,A1
     MOVE.B   #0,PrintLines
+    JSR      PrintSpace
 
 * Put program code here
 
@@ -220,11 +221,6 @@ ClearEverything
              CLR.L       StartAddr
              CLR.L       EndAddr
 
-* Clear output
-			 JSR 	  Print
-		     MOVE.L   PrintPointer,A1
-		     MOVE.B   #0,PrintLines
-
              BRA         START
 
 quit
@@ -249,6 +245,8 @@ quit
 ;If nothing work BUG is in GetNextD4bit subroutine or InvalidOpcode subroutine, both is at the bottom of the file
 
 DecodingMachineCode
+			MOVE.L  (A4),CurDecode
+
             CMPI.W  #20081,(A4)    ; NOP if equal
             BEQ     PrintNOP       ; Call Output PrintNOP subroutine
             ;RTS                    ; Return to get more input
@@ -257,6 +255,8 @@ DecodingMachineCode
             BEQ     PrintRTS       ; Call Output PrintRTS subroutine
             ;RTS                    ; Return to get more input
 
+            CLR     D2
+            MOVE.W  (A4),D2        ; create copy of data in A4 to fix restart
             MOVE.L  #4,D4          ; get the next 4 bit from (A4) in to D5
             JSR     GetNextD4bit   ; D5 hold the first 4 bit of (A4)
 
@@ -3137,10 +3137,14 @@ Bcc_displacement    ;for gettin the next 8 bit for displacement and outputting i
 
 Bcc_16bit_Disp
             ; print 16bit address
+			MOVE.L   (A4)+,A4
+		    MOVE.B   38(A6),(A1)+        *$
             RTS                     ; return to input to get more input
 
 Bcc_32bit_Disp
             ; print 32bit address
+			MOVE.L   (A4)+,A4
+		    MOVE.B   38(A6),(A1)+        *$
             RTS                     ; return to input to get more input
 
 
@@ -3254,10 +3258,6 @@ Lea_xxxL_Opcode
 
 
 *************************************************                MoveM_R2M_W                *************************************************
-PrintList
-			MOVE.L	(A4)+,A4
-			RTS
-
 ; MOVEM.W from register to memory
 ; first 10 bit is (0100 1000 10## ####)
 MoveM_R2M_W
@@ -3281,7 +3281,7 @@ MoveM_R2M_W_M2
             JSR 	PrintMoveM
             JSR 	LengthW
 			JSR     PrintSpace
-            JSR		PrintList
+            ;print <list>
 			MOVE.B	37(A6),(A1)+		 *,
             JSR		PrintIndirAddrReg
             RTS                     ; return to input to get more input
@@ -3292,7 +3292,7 @@ MoveM_R2M_W_M4
             JSR 	PrintMoveM
             JSR 	LengthW
 			JSR     PrintSpace
-            JSR		PrintList
+            ;print <list>
 			MOVE.B	37(A6),(A1)+		 *,
 			JSR		PrintPreDeincAddrReg
             RTS                     ; return to input to get more input
@@ -3310,19 +3310,19 @@ MoveM_R2M_W_M7
             JMP     InvalidOpcode  ; for mode 7 if register is not 0 or 1, moveM is invaid
 
 MoveM_R2M_W_xxxW
-			JSR 	PrintMoveM
-			JSR 	LengthW
+			JSR PrintMoveM
+			JSR LengthW
 			JSR     PrintSpace
-            JSR		PrintList
+            ;print <list>
 			MOVE.B	37(A6),(A1)+		 *,
 			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
 MoveM_R2M_W_xxxL
-			JSR 	PrintMoveM
-			JSR 	LengthW
+			JSR PrintMoveM
+			JSR LengthW
 			JSR     PrintSpace
-            JSR		PrintList
+            ;print <list>
 			MOVE.B	37(A6),(A1)+		 *,
 			JSR		PrintLong
             RTS                     ; return to input to get more input
@@ -3349,10 +3349,10 @@ MoveM_R2M_L
 MoveM_R2M_L_M2
             MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
-            JSR 	PrintMoveM
-            JSR		LengthL
+            JSR PrintMoveM
+            JSR LengthL
 			JSR     PrintSpace
-            JSR		PrintList
+            ;print <list>
 			MOVE.B	37(A6),(A1)+		 *,
             JSR		PrintIndirAddrReg
             RTS                     ; return to input to get more input
@@ -3360,10 +3360,10 @@ MoveM_R2M_L_M2
 MoveM_R2M_L_M4
             MOVE.L  #3,D4          ; get the next 3 bit from (A4)(position 2-0) in to D5
             JSR     GetNextD4bit   ; D5 hold the next 3 bit of (A4), which tell us the register
-            JSR 	PrintMoveM
-            JSR 	LengthL
+            JSR PrintMoveM
+            JSR LengthL
 			JSR     PrintSpace
-            JSR		PrintList
+            ;print <list>
 			MOVE.B	37(A6),(A1)+		 *,
 			JSR		PrintPreDeincAddrReg
             RTS                     ; return to input to get more input
@@ -3381,19 +3381,19 @@ MoveM_R2M_L_M7
             JMP     InvalidOpcode  ; for mode 7 if register is not 0 or 1, moveM is invaid
 
 MoveM_R2M_L_xxxW
-			JSR 	PrintMoveM
-			JSR 	LengthL
+			JSR PrintMoveM
+			JSR LengthL
 			JSR     PrintSpace
-            JSR		PrintList
+            ;print <list>
 			MOVE.B	37(A6),(A1)+		 *,
 			JSR		PrintByteOrWord
             RTS                     ; return to input to get more input
 
 MoveM_R2M_L_xxxL
-			JSR 	PrintMoveM
-			JSR 	LengthL
+			JSR PrintMoveM
+			JSR LengthL
 			JSR     PrintSpace
-            JSR		PrintList
+            ;print <list>
 			MOVE.B	37(A6),(A1)+		 *,
 			JSR		PrintLong
             RTS                     ; return to input to get more input
@@ -3425,7 +3425,7 @@ MoveM_M2R_W_M2
             JSR		PrintIndirAddrReg
 
 			MOVE.B	37(A6),(A1)+		 *,
-            JSR		PrintList
+            ;print <list>
             RTS                     ; return to input to get more input
 
 MoveM_M2R_W_M4
@@ -3437,7 +3437,7 @@ MoveM_M2R_W_M4
 			JSR		PrintPreDeincAddrReg
 
 			MOVE.B	37(A6),(A1)+		 *,
-            JSR		PrintList
+            ;print <list>
             RTS                     ; return to input to get more input
 
 MoveM_M2R_W_M7
@@ -3459,7 +3459,7 @@ MoveM_M2R_W_xxxW
 			JSR		PrintByteOrWord
 
 			MOVE.B	37(A6),(A1)+		 *,
-            JSR		PrintList
+            ;print <list>
             RTS                     ; return to input to get more input
 
 MoveM_M2R_W_xxxL
@@ -3469,7 +3469,7 @@ MoveM_M2R_W_xxxL
 			JSR		PrintLong
 
 			MOVE.B	37(A6),(A1)+		 *,
-            JSR		PrintList
+            ;print <list>
             RTS                     ; return to input to get more input
 
 *************************************************                MoveM_M2R_L                *************************************************
@@ -3499,7 +3499,7 @@ MoveM_M2R_L_M2
             JSR		PrintIndirAddrReg
 
 			MOVE.B	37(A6),(A1)+		 *,
-            JSR		PrintList
+            ;print <list>
             RTS                     ; return to input to get more input
 
 MoveM_M2R_L_M4
@@ -3511,7 +3511,7 @@ MoveM_M2R_L_M4
 			JSR		PrintPreDeincAddrReg
 
 			MOVE.B	37(A6),(A1)+		 *,
-            JSR		PrintList
+            ;print <list>
             RTS                     ; return to input to get more input
 
 MoveM_M2R_L_M7
@@ -3533,7 +3533,7 @@ MoveM_M2R_L_xxxW
 			JSR		PrintByteOrWord
 
 			MOVE.B	37(A6),(A1)+		 *,
-            JSR		PrintList
+            ;print <list>
             RTS                     ; return to input to get more input
 
 MoveM_M2R_L_xxxL
@@ -3543,7 +3543,7 @@ MoveM_M2R_L_xxxL
 			JSR		PrintLong
 
 			MOVE.B	37(A6),(A1)+		 *,
-            JSR		PrintList
+            ;print <list>
             RTS                     ; return to input to get more input
 
 *************************************************                Muls_L                 *************************************************
@@ -4575,7 +4575,7 @@ InvalidOpcode  ; don't use JSR to get here. Use JMP. If use JSR, RTS will not go
 
 *************************************************                Subroutine             *************************************************
 
-GetNextD4bit ; Subroutine for get the next (D4) bit from (A4) in to D5
+GetNextD4bit ; Subroutine for get the next (D4) bit from (A4) into D5
              ; D4 should contain the number of loop you want to do
             MOVE.L  #0,D3          ; initialize D3 to 0
             MOVE.L  #0,D5          ; initialize D5 to 0, for storing result of bit from (A4)
@@ -4585,7 +4585,8 @@ LOOP        CMP.B   D3,D4          ; for number of iterations
             ADDQ.L  #1,D3          ; D3++, increment D3
 
             LSL.L   #1,D5          ; Shift left one
-            LSL.W   (A4)           ; Shift left one
+
+            LSL.W   #1,D2          ; shift left one
             BCS     ADD1           ; If there is a carry bit add one to D5
             BRA     LOOP
 
@@ -4629,15 +4630,7 @@ WaitMore
     TRAP     #15
     MOVE.B   #5,D0
     TRAP     #15
-	CMP.B	 #13,D1
-    BEQ      GoAheadAndPrint
-	BRA		 NotEnter
-
-NotEnter
-	LEA 	PressEnter,A1
-	MOVE.B	#14,D0
-	TRAP	#15
-	BRA 	WaitMore
+    BRA      GoAheadAndPrint
 
 GoAheadAndPrint
     MOVE.L   PrintPointer,A1
@@ -4698,15 +4691,19 @@ PrintImmediateData
 	RTS
 
 PrintByteOrWord
+    MOVE.B   38(A6),(A1)+        *$
 	JSR 	Print
-	MOVE.W	(A4)+,(A1)+
+
+	MOVE.W	(A4)+,D1
 	MOVE.B	#16,D2
 	MOVE.B  #15,D0
 	TRAP 	#15
 	RTS
 
 PrintLong
+    MOVE.B   38(A6),(A1)+        *$
 	JSR		Print
+
 	MOVE.W	(A4)+,D1
 	MOVE.B	#16,D2
 	MOVE.B  #15,D0
@@ -4726,13 +4723,12 @@ RightTwenty
 
 ** General
 NotFound
-    MOVE.B   30(A6),(A1)+        *U
-    MOVE.B   23(A6),(A1)+        *N
-    MOVE.B   20(A6),(A1)+        *K
-    MOVE.B   23(A6),(A1)+        *N
-    MOVE.B   24(A6),(A1)+        *O
-    MOVE.B   32(A6),(A1)+        *W
-    MOVE.B   23(A6),(A1)+        *N
+    MOVE.B   13(A6),(A1)+        *D
+    MOVE.B   10(A6),(A1)+        *A
+    MOVE.B   29(A6),(A1)+        *T
+    MOVE.B   10(A6),(A1)+        *A
+	JSR      PrintTab
+    MOVE.B   38(A6),(A1)+        *$
     RTS
 
 PrintDataReg
@@ -4959,8 +4955,8 @@ PrintSpace
 CR           EQU     $0D
 LF           EQU     $0A
 
-EmptyChar    DC.W    '', 0
-SpaceChar    DC.W ' ', 0
+;EmptyChar    DC.W    '', 0
+;SpaceChar    DC.W ' ', 0
 
 EndAddr      EQU     $500                        ; store end address, avoid overwriting
 StartAddr    EQU     $600                        ; store start address, avoid overwriting
@@ -4975,8 +4971,6 @@ IntroMsg     DC.B    '**********************************************************
 AskStartAddr DC.B 'Enter starting address in hexadecimal:', CR, LF, 0
 
 AskEndAddr   DC.B 'Enter ending address in hexadecimal:', CR, LF, 0
-
-;AskToCont    DC.B 'Press Enter to continue:', 0
 
 AskRestartOrExitMsg DC.B 'Enter 0 to exit program or 1 to restart the program: ', 0
 
@@ -5006,14 +5000,17 @@ StrE                       DC.W 'E', 0
 StrF                       DC.W 'F', 0
 
 
-PressEnter      DC.B   CR,LF,'Input recieved was not ENTER', CR, LF, 0
-WaitForMore     DC.B   'Max number of lines on screen. Press ENTER to continue dissassembling', CR, LF, 0
+WaitForMore     DC.B   'Max number of lines on screen. Press enter to continue dissassembling', CR, LF, 0
 Values          DC.B   '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','.',',','$','(',')','#','+','-',' '
 *                       0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40  41  42  43  44
 PrintPointer    DC.L   $3500
 PrintLines      DC.L   $4500
+CurDecode		DC.L   $5500
 
               END    START        ; last line of source
+
+
+
 
 
 
