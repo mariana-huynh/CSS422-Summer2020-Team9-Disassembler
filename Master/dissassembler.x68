@@ -2967,7 +2967,7 @@ DIVU_W_Opcode
             JSR     GetNextD4bit        ; D5 hold the next 3 bit of (A4), which tell us the register
 
             MOVE.L  D5,D0               ; D0 will hold the register
-        ; D0 will hold the register (position 11-9)
+        	; D0 will hold the register (position 11-9)
 
             MOVE.L  #3,D4               ; get the next 3 bit from (A4)(position 8-6) in to D5
             JSR     GetNextD4bit        ; D5 hold the next 3 bit of (A4), which tell us the register

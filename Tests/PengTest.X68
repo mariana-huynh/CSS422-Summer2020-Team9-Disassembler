@@ -242,9 +242,9 @@ label3
     MULS.W    $12345678,D1
     MULS.W    #$1234,D1
     ;DIVU.W    $12,D1
-    DIVU.W    $1234,D1
-    DIVU.W    $12345678,D1
-    DIVU.W    #$1234,D1
+    ;DIVU.W    $1234,D1
+    ;DIVU.W    $12345678,D1
+    ;DIVU.W    #$1234,D1
 label4
     BGT.B     label4
     BGT.B     label4

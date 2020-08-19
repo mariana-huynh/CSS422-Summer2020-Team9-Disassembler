@@ -1,6 +1,6 @@
 00009000 Starting Address
 Assembler used: EASy68K Editor/Assembler v5.16.01
-Created On: 8/18/2020 9:13:54 PM
+Created On: 8/18/2020 9:20:34 PM
 
 00000000                             1  *****************************
 00000000                             2  *
@@ -246,32 +246,32 @@ Created On: 8/18/2020 9:13:54 PM
 00009268  C3F9 12345678            242      MULS.W    $12345678,D1
 0000926E  C3FC 1234                243      MULS.W    #$1234,D1
 00009272                           244      ;DIVU.W    $12,D1
-00009272  82F8 1234                245      DIVU.W    $1234,D1
-00009276  82F9 12345678            246      DIVU.W    $12345678,D1
-0000927C  82FC 1234                247      DIVU.W    #$1234,D1
-00009280                           248  label4
-00009280  6EFE                     249      BGT.B     label4
-00009282  6EFC                     250      BGT.B     label4
-00009284  6EFA                     251      BGT.B     label4
-00009286  6F00 FF0E                252      BLE.W     label1
-0000928A  6F00 FF1C                253      BLE.W     label2
-0000928E  6F00 FF30                254      BLE.W     label3
-00009292  6700 FF02                255      BEQ.W     label1
-00009296  6700 FF10                256      BEQ.W     label2
-0000929A  6700 FF24                257      BEQ.W     label3
-0000929E  6000 FF08                258      BRA       label2
-000092A2  6000 FF1C                259      BRA       label3
-000092A6  4EB9 00009196            260      JSR       label1
-000092AC  4EB9 000091A8            261      JSR       label2
-000092B2  4EB9 000091C0            262      JSR       label3
-000092B8                           263  
-000092B8                           264  * Put program code here
-000092B8                           265  
-000092B8  FFFF FFFF                266      SIMHALT             ; halt simulator
-000092BC                           267  
-000092BC                           268  * Put variables and constants here
-000092BC                           269  
-000092BC                           270      END    START        ; last line of source
+00009272                           245      ;DIVU.W    $1234,D1
+00009272                           246      ;DIVU.W    $12345678,D1
+00009272                           247      ;DIVU.W    #$1234,D1
+00009272                           248  label4
+00009272  6EFE                     249      BGT.B     label4
+00009274  6EFC                     250      BGT.B     label4
+00009276  6EFA                     251      BGT.B     label4
+00009278  6F00 FF1C                252      BLE.W     label1
+0000927C  6F00 FF2A                253      BLE.W     label2
+00009280  6F00 FF3E                254      BLE.W     label3
+00009284  6700 FF10                255      BEQ.W     label1
+00009288  6700 FF1E                256      BEQ.W     label2
+0000928C  6700 FF32                257      BEQ.W     label3
+00009290  6000 FF16                258      BRA       label2
+00009294  6000 FF2A                259      BRA       label3
+00009298  4EB9 00009196            260      JSR       label1
+0000929E  4EB9 000091A8            261      JSR       label2
+000092A4  4EB9 000091C0            262      JSR       label3
+000092AA                           263  
+000092AA                           264  * Put program code here
+000092AA                           265  
+000092AA  FFFF FFFF                266      SIMHALT             ; halt simulator
+000092AE                           267  
+000092AE                           268  * Put variables and constants here
+000092AE                           269  
+000092AE                           270      END    START        ; last line of source
 
 No errors detected
 No warnings generated
@@ -283,6 +283,6 @@ Symbol-name         Value
 LABEL1              9196
 LABEL2              91A8
 LABEL3              91C0
-LABEL4              9280
+LABEL4              9272
 NOP                 9000
 START               9000
